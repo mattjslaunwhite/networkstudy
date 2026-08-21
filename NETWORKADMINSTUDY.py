@@ -4,7 +4,7 @@ from tkinter import ttk
 import random
 
 # --- App Metadata ---
-APP_VERSION = "1.0.8"
+APP_VERSION = "1.0.9"
 BUILD_DATE = "August 21, 2026"
 AUTHOR = "Matt-Réal Slaunwhite"
 
@@ -133,6 +133,70 @@ QUIZ_DATA = {
     ]
 }
 
+# --- Multiple Choice Test Bank ---
+PRACTICE_TEST_BANK = [
+    {
+        "q": "A network technician is configuring a firewall and needs to block unencrypted web traffic. Which port should be blocked?",
+        "options": ["Port 443", "Port 80", "Port 22", "Port 53"],
+        "answer": "Port 80",
+        "exp": "Port 80 is used for HTTP (unencrypted web traffic). Port 443 is HTTPS (encrypted)."
+    },
+    {
+        "q": "At which OSI layer does a standard network switch operate?",
+        "options": ["Layer 1 (Physical)", "Layer 2 (Data Link)", "Layer 3 (Network)", "Layer 4 (Transport)"],
+        "answer": "Layer 2 (Data Link)",
+        "exp": "Switches operate at Layer 2, making forwarding decisions based on MAC addresses."
+    },
+    {
+        "q": "A user states they cannot access the internet. According to the CompTIA troubleshooting methodology, what should the technician do FIRST?",
+        "options": ["Establish a theory of probable cause", "Identify the problem", "Test the theory", "Establish a plan of action"],
+        "answer": "Identify the problem",
+        "exp": "Step 1 is always to identify the problem (e.g., questioning the user, duplicating the issue)."
+    },
+    {
+        "q": "Which DNS record type is responsible for routing email to the correct server?",
+        "options": ["A Record", "CNAME Record", "MX Record", "TXT Record"],
+        "answer": "MX Record",
+        "exp": "MX (Mail Exchanger) records direct email to a mail server."
+    },
+    {
+        "q": "How many usable IP addresses are available in a network with a /26 CIDR notation?",
+        "options": ["254", "126", "62", "30"],
+        "answer": "62",
+        "exp": "A /26 leaves 6 bits for hosts. (2^6) - 2 = 64 - 2 = 62 usable addresses."
+    },
+    {
+        "q": "Which type of fiber optic cable uses lasers and is meant for long-distance transmissions?",
+        "options": ["Multi-mode Fiber", "Single-mode Fiber", "Cat 6a", "Coaxial"],
+        "answer": "Single-mode Fiber",
+        "exp": "Single-mode fiber (SMF) uses lasers to shoot a single beam of light over long distances (kilometers)."
+    },
+    {
+        "q": "Which protocol uses port 3389?",
+        "options": ["SSH", "RDP", "FTP", "Telnet"],
+        "answer": "RDP",
+        "exp": "Remote Desktop Protocol (RDP) uses port 3389."
+    },
+    {
+        "q": "What is the second step in the DHCP DORA process?",
+        "options": ["Discover", "Offer", "Request", "Acknowledge"],
+        "answer": "Offer",
+        "exp": "The DORA process is Discover, Offer, Request, Acknowledge."
+    },
+    {
+        "q": "Which of the following is the Protocol Data Unit (PDU) at Layer 3 of the OSI model?",
+        "options": ["Bit", "Frame", "Packet", "Segment"],
+        "answer": "Packet",
+        "exp": "Layer 3 (Network) handles Packets. Layer 2 handles Frames, and Layer 4 handles Segments/Datagrams."
+    },
+    {
+        "q": "A technician needs to run a copper cable that can support 10 Gbps speeds over a distance of 100 meters. Which cable is required?",
+        "options": ["Cat 5e", "Cat 6", "Cat 6a", "Cat 5"],
+        "answer": "Cat 6a",
+        "exp": "Cat 6a supports 10 Gbps up to 100 meters. Standard Cat 6 only supports 10 Gbps up to 55 meters."
+    }
+]
+
 class StudyTab(ttk.Frame):
     def __init__(self, parent, chapter_name):
         super().__init__(parent)
@@ -144,25 +208,21 @@ class StudyTab(ttk.Frame):
         quiz_frame = ttk.LabelFrame(self, text="Practice Flashcards")
         quiz_frame.pack(side=tk.BOTTOM, fill=tk.X, expand=False, padx=10, pady=(5, 10))
         
-        # Divide the quiz frame into Left (Text) and Right (Buttons)
         text_frame = ttk.Frame(quiz_frame)
         text_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(20, 10), pady=15)
         
         btn_frame = ttk.Frame(quiz_frame)
         btn_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(10, 20), pady=15)
         
-        # Progress Tracker Label
         self.lbl_progress = tk.Label(text_frame, text="", font=("Helvetica", 9, "bold"), fg="#7f8c8d", justify="left")
         self.lbl_progress.pack(anchor="w", pady=(0, 2))
 
-        # Enforce a minimum height for the text area so it doesn't jump around when questions change
         self.lbl_question = tk.Label(text_frame, text="", font=("Helvetica", 12, "bold"), wraplength=450, justify="left", height=2)
         self.lbl_question.pack(anchor="w", pady=(2, 5))
         
         self.lbl_answer = tk.Label(text_frame, text="", font=("Helvetica", 12, "italic"), fg="#27ae60", wraplength=450, justify="left", height=2)
         self.lbl_answer.pack(anchor="w", pady=(0, 5))
         
-        # Styled Buttons (Stacked Vertically on the Right)
         style = ttk.Style()
         style.configure('Action.TButton', font=('Helvetica', 10, 'bold'))
         
@@ -193,7 +253,6 @@ class StudyTab(ttk.Frame):
         notes_text.config(state=tk.DISABLED)
         notes_text.pack(fill=tk.BOTH, expand=True)
         
-        # Load the first question
         random.shuffle(self.questions)
         self.load_question()
 
@@ -205,12 +264,9 @@ class StudyTab(ttk.Frame):
 
         if self.questions:
             q, _ = self.questions[self.current_q_index]
-            
-            # Update the progress tracker
             total = len(self.questions)
             current = self.current_q_index + 1
             
-            # Only update the text if we aren't displaying the completion message
             if self.lbl_progress.cget("text") != "Deck Completed! Reshuffling...":
                 self.lbl_progress.config(text=f"Card {current} of {total}")
             
@@ -246,13 +302,167 @@ class StudyTab(ttk.Frame):
                 self.current_q_index = next_index
                 self.load_question()
 
+class PracticeTestTab(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.test_size = 5 # How many questions per test
+        self.current_test = []
+        self.current_q_index = 0
+        self.score = 0
+        self.selected_answer = tk.StringVar()
+        
+        # --- UI Setup ---
+        self.header_lbl = tk.Label(self, text="CompTIA Practice Simulator", font=("Helvetica", 14, "bold"), fg="#2c3e50")
+        self.header_lbl.pack(pady=(20, 5))
+        
+        self.progress_lbl = tk.Label(self, text="", font=("Helvetica", 10), fg="#7f8c8d")
+        self.progress_lbl.pack(pady=(0, 20))
+        
+        # Question Area
+        self.q_frame = ttk.Frame(self)
+        self.q_frame.pack(fill=tk.BOTH, expand=True, padx=40)
+        
+        self.lbl_question = tk.Label(self.q_frame, text="", font=("Helvetica", 12, "bold"), wraplength=550, justify="left")
+        self.lbl_question.pack(anchor="w", pady=(0, 20))
+        
+        # Radio buttons for options
+        self.radio_btns = []
+        for _ in range(4):
+            rb = ttk.Radiobutton(self.q_frame, text="", variable=self.selected_answer, value="")
+            rb.pack(anchor="w", pady=5)
+            self.radio_btns.append(rb)
+            
+        # Feedback Area
+        self.feedback_lbl = tk.Label(self.q_frame, text="", font=("Helvetica", 11, "bold"), wraplength=550, justify="left")
+        self.feedback_lbl.pack(anchor="w", pady=(20, 5))
+        
+        self.exp_lbl = tk.Label(self.q_frame, text="", font=("Helvetica", 11, "italic"), fg="#34495e", wraplength=550, justify="left")
+        self.exp_lbl.pack(anchor="w", pady=(0, 20))
+        
+        # Controls
+        self.controls_frame = ttk.Frame(self)
+        self.controls_frame.pack(fill=tk.X, padx=40, pady=20)
+        
+        style = ttk.Style()
+        style.configure('Test.TButton', font=('Helvetica', 11, 'bold'))
+        
+        self.btn_submit = ttk.Button(self.controls_frame, text="Submit Answer", command=self.submit_answer, style='Test.TButton')
+        self.btn_submit.pack(side=tk.LEFT, padx=(0, 10))
+        
+        self.btn_next = ttk.Button(self.controls_frame, text="Next Question", command=self.next_question, style='Test.TButton', state=tk.DISABLED)
+        self.btn_next.pack(side=tk.LEFT)
+        
+        self.btn_restart = ttk.Button(self.controls_frame, text="Start New Test", command=self.start_new_test, style='Test.TButton')
+        # We only pack the restart button when the test is over
+        
+        self.start_new_test()
+
+    def start_new_test(self):
+        # Pull a random subset of questions
+        self.current_test = random.sample(PRACTICE_TEST_BANK, min(self.test_size, len(PRACTICE_TEST_BANK)))
+        self.current_q_index = 0
+        self.score = 0
+        
+        self.btn_restart.pack_forget()
+        self.btn_submit.pack(side=tk.LEFT, padx=(0, 10))
+        self.btn_next.pack(side=tk.LEFT)
+        
+        self.load_question()
+        
+    def load_question(self):
+        self.selected_answer.set("") # Clear radio selection
+        self.feedback_lbl.config(text="")
+        self.exp_lbl.config(text="")
+        self.btn_submit.config(state=tk.NORMAL)
+        self.btn_next.config(state=tk.DISABLED)
+        
+        # Enable radio buttons
+        for rb in self.radio_btns:
+            rb.config(state=tk.NORMAL)
+        
+        q_data = self.current_test[self.current_q_index]
+        self.progress_lbl.config(text=f"Question {self.current_q_index + 1} of {self.test_size} | Current Score: {self.score}")
+        self.lbl_question.config(text=q_data["q"])
+        
+        # Shuffle options so the correct answer isn't always in the same spot
+        options = q_data["options"].copy()
+        random.shuffle(options)
+        
+        for i, rb in enumerate(self.radio_btns):
+            if i < len(options):
+                rb.config(text=options[i], value=options[i])
+                rb.pack(anchor="w", pady=5)
+            else:
+                rb.pack_forget() # Hide if less than 4 options (though we designed for 4)
+
+    def submit_answer(self):
+        selected = self.selected_answer.get()
+        if not selected:
+            self.feedback_lbl.config(text="Please select an answer first!", fg="#e74c3c")
+            return
+            
+        q_data = self.current_test[self.current_q_index]
+        self.btn_submit.config(state=tk.DISABLED)
+        self.btn_next.config(state=tk.NORMAL)
+        
+        # Lock radio buttons
+        for rb in self.radio_btns:
+            rb.config(state=tk.DISABLED)
+            
+        if selected == q_data["answer"]:
+            self.score += 1
+            self.feedback_lbl.config(text="✅ Correct!", fg="#27ae60")
+        else:
+            self.feedback_lbl.config(text=f"❌ Incorrect. The correct answer was: {q_data['answer']}", fg="#c0392b")
+            
+        self.exp_lbl.config(text=q_data["exp"])
+        
+        # Update score instantly
+        self.progress_lbl.config(text=f"Question {self.current_q_index + 1} of {self.test_size} | Current Score: {self.score}")
+        
+        # If it was the last question, change the Next button to complete
+        if self.current_q_index >= self.test_size - 1:
+            self.btn_next.config(text="Finish Test")
+
+    def next_question(self):
+        self.current_q_index += 1
+        
+        if self.current_q_index < self.test_size:
+            self.btn_next.config(text="Next Question")
+            self.load_question()
+        else:
+            # End of test
+            self.show_results()
+            
+    def show_results(self):
+        self.lbl_question.config(text=f"Test Complete!\n\nFinal Score: {self.score} out of {self.test_size}")
+        
+        percent = (self.score / self.test_size) * 100
+        if percent >= 80:
+            msg = "Great job! You're ready for the exam."
+            color = "#27ae60"
+        else:
+            msg = "Keep studying! Review the flashcards and try again."
+            color = "#f39c12"
+            
+        self.feedback_lbl.config(text=msg, fg=color)
+        self.exp_lbl.config(text="")
+        self.progress_lbl.config(text="")
+        
+        # Hide all radio buttons
+        for rb in self.radio_btns:
+            rb.pack_forget()
+            
+        self.btn_submit.pack_forget()
+        self.btn_next.pack_forget()
+        
+        self.btn_restart.pack(side=tk.LEFT)
 
 def main():
     root = tk.Tk()
     root.title(f"Network+ Beginner's Study Guide - Build {APP_VERSION}")
     root.geometry("700x780")
     
-    # Configure a clean, modern theme
     style = ttk.Style()
     style.theme_use('clam')
     
@@ -262,19 +472,24 @@ def main():
     tk.Label(header_frame, text="CompTIA Network+ Foundations", font=("Helvetica", 16, "bold"), fg="white", bg="#34495e").pack()
     tk.Label(header_frame, text="Learn the core concepts with simple analogies and flashcards.", font=("Helvetica", 10), fg="#bdc3c7", bg="#34495e").pack()
     
-    # 2. Pack Footer SECOND (Locks to bottom so it never gets pushed off)
+    # 2. Pack Footer SECOND (Locks to bottom)
     footer_frame = tk.Frame(root, bg="#ecf0f1", pady=5)
     footer_frame.pack(fill=tk.X, side=tk.BOTTOM)
     footer_text = f"Built by {AUTHOR} | {BUILD_DATE} | Build {APP_VERSION}"
     tk.Label(footer_frame, text=footer_text, font=("Helvetica", 8, "bold"), fg="#7f8c8d", bg="#ecf0f1").pack()
 
-    # 3. Pack Notebook LAST (Fills the remaining space in the middle)
+    # 3. Pack Notebook LAST
     notebook = ttk.Notebook(root)
     notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
     
+    # Add Chapter Tabs
     for chapter in CHAPTER_CONTENT.keys():
         tab = StudyTab(notebook, chapter)
         notebook.add(tab, text=chapter)
+        
+    # Add Practice Test Tab
+    test_tab = PracticeTestTab(notebook)
+    notebook.add(test_tab, text="🎓 Practice Test")
         
     root.mainloop()
 
