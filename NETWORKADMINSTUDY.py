@@ -4,82 +4,100 @@ from tkinter import ttk
 import random
 
 # --- App Metadata ---
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.0.1"
 BUILD_DATE = "August 21, 2026"
 AUTHOR = "Matt-Réal Slaunwhite"
 
 # --- Data Structure for the App ---
-# Beginner-friendly explanations with analogies.
+# Re-formatted with explicit spacing, bullet points, and capitalized headers for readability.
 
 CHAPTER_CONTENT = {
     "Ch 1: OSI Model": (
-        "THE OSI MODEL (How Data Travels)\n\n"
-        "Think of the OSI model like a post office processing a package. As data goes down the layers, it gets boxed up. As it goes up, it gets unboxed.\n\n"
-        "7. Application: The user interacting with the app (e.g., typing a web address).\n"
-        "6. Presentation: Translating and encrypting the data (making sure it's readable/secure).\n"
-        "5. Session: Opening and closing the connection between two computers.\n"
-        "4. Transport: Sorting the data to the right service (TCP is reliable/tracks delivery, UDP is fast but drops lost packages).\n"
-        "3. Network: The 'GPS' layer. Uses IP addresses to route packets across the internet.\n"
-        "2. Data Link: Local delivery within the same network. Uses MAC addresses (burned into hardware) to deliver Frames.\n"
-        "1. Physical: The actual cables, radio waves (Wi-Fi), and electrical signals (Bits).\n\n"
-        "*Mnemonic to memorize layer 1 to 7:* Please Do Not Throw Sausage Pizza Away."
+        "THE OSI MODEL (How Data Travels)\n"
+        "--------------------------------------------------\n"
+        "Think of the OSI model like a post office processing a package. "
+        "As data goes down the layers, it gets boxed up. As it goes up, it gets unboxed.\n\n"
+        "7. APPLICATION\n"
+        "• The user interacting with the app (e.g., typing a web address).\n\n"
+        "6. PRESENTATION\n"
+        "• Translating and encrypting the data (making sure it's readable/secure).\n\n"
+        "5. SESSION\n"
+        "• Opening and closing the connection between two computers.\n\n"
+        "4. TRANSPORT\n"
+        "• Sorting the data to the right service (TCP is reliable/tracks delivery, UDP is fast but drops packages).\n\n"
+        "3. NETWORK\n"
+        "• The 'GPS' layer. Uses IP addresses to route packets across the internet.\n\n"
+        "2. DATA LINK\n"
+        "• Local delivery within the same network. Uses MAC addresses (burned into hardware) to deliver Frames.\n\n"
+        "1. PHYSICAL\n"
+        "• The actual cables, radio waves (Wi-Fi), and electrical signals (Bits).\n\n"
+        "--------------------------------------------------\n"
+        "*Mnemonic:* Please Do Not Throw Sausage Pizza Away."
     ),
     "Ch 2: Ports": (
-        "COMMON PORTS (Doors to the Computer)\n\n"
+        "COMMON PORTS (Doors to the Computer)\n"
+        "--------------------------------------------------\n"
         "If an IP address is a building's street address, a Port is the specific apartment door inside that building.\n\n"
-        "• 20/21 (FTP): Used for transferring files.\n"
-        "• 22 (SSH): Secure, encrypted command-line access.\n"
-        "• 23 (Telnet): Unencrypted command-line access (Avoid using!).\n"
-        "• 25 (SMTP): Sending emails out.\n"
-        "• 53 (DNS): The internet's phonebook.\n"
-        "• 67/68 (DHCP): Automatically handing out IP addresses.\n"
-        "• 80 (HTTP): Unencrypted web browsing.\n"
-        "• 110 (POP3) & 143 (IMAP): Receiving emails in.\n"
-        "• 443 (HTTPS): Secure, encrypted web browsing.\n"
+        "• 20/21 (FTP): Used for transferring files.\n\n"
+        "• 22 (SSH): Secure, encrypted command-line access.\n\n"
+        "• 23 (Telnet): Unencrypted command-line access (Avoid using!).\n\n"
+        "• 25 (SMTP): Sending emails out.\n\n"
+        "• 53 (DNS): The internet's phonebook.\n\n"
+        "• 67/68 (DHCP): Automatically handing out IP addresses.\n\n"
+        "• 80 (HTTP): Unencrypted web browsing.\n\n"
+        "• 110 (POP3) & 143 (IMAP): Receiving emails in.\n\n"
+        "• 443 (HTTPS): Secure, encrypted web browsing.\n\n"
         "• 3389 (RDP): Windows Remote Desktop connection."
     ),
     "Ch 3: Hardware": (
-        "NETWORK HARDWARE & CABLES\n\n"
+        "NETWORK HARDWARE & CABLES\n"
+        "--------------------------------------------------\n"
         "Cables (The Roads):\n"
-        "• Cat 5e/Cat 6: Standard copper ethernet cables. Cat 6 is faster but maxes out at 55 meters for its top speed.\n"
-        "• Fiber Optic: Uses light instead of electricity. 'Single-mode' uses lasers for long distances (miles). 'Multi-mode' uses LEDs for shorter distances (data centers).\n\n"
+        "• Cat 5e / Cat 6: Standard copper ethernet cables. Cat 6 is faster but maxes out at 55 meters for its top speed.\n\n"
+        "• Fiber Optic: Uses light instead of electricity.\n"
+        "  - Single-mode uses lasers for long distances (miles).\n"
+        "  - Multi-mode uses LEDs for shorter distances (data centers).\n\n\n"
         "Devices (The Traffic Cops):\n"
-        "• Switch: Connects devices in the SAME building/network. It learns MAC addresses to send data only to the right computer.\n"
-        "• Router: Connects DIFFERENT networks together (like your home to the Internet). It uses IP addresses to figure out where data needs to go globally."
+        "• Switch (Layer 2): Connects devices in the SAME building/network. It learns MAC addresses to send data only to the right computer.\n\n"
+        "• Router (Layer 3): Connects DIFFERENT networks together (like your home to the Internet). It uses IP addresses to figure out where data needs to go globally."
     ),
     "Ch 4: Subnetting": (
-        "SUBNETTING (Slicing the Pie)\n\n"
-        "Subnetting is simply taking a massive block of IP addresses and slicing them up into smaller, manageable networks (like dividing a big company into HR, Sales, and IT departments).\n\n"
+        "SUBNETTING (Slicing the Pie)\n"
+        "--------------------------------------------------\n"
+        "Subnetting is simply taking a massive block of IP addresses and slicing them up into smaller, manageable networks.\n\n"
         "The Magic Rule (2^n):\n"
         "When figuring out how many subnets you can make, you borrow 'bits'. If you borrow 3 bits, you calculate 2 to the power of 3 (2 x 2 x 2 = 8 subnets).\n\n"
         "Common Subnet Masks to recognize:\n"
-        "• /24 = 255.255.255.0 (Fits about 254 computers)\n"
-        "• /25 = 255.255.255.128 (Fits about 126 computers)\n"
+        "• /24 = 255.255.255.0 (Fits about 254 computers)\n\n"
+        "• /25 = 255.255.255.128 (Fits about 126 computers)\n\n"
         "• /26 = 255.255.255.192 (Fits about 62 computers)\n\n"
+        "--------------------------------------------------\n"
         "*Exam Tip:* You always lose 2 IP addresses in every subnet—one for the Network ID, and one for the Broadcast address."
     ),
     "Ch 5: Services": (
-        "CORE NETWORK SERVICES\n\n"
+        "CORE NETWORK SERVICES\n"
+        "--------------------------------------------------\n"
         "DNS (Domain Name System): The Internet Phonebook\n"
-        "Computers only understand numbers (IP addresses), but humans prefer names (google.com). DNS translates names into numbers.\n"
+        "Computers only understand numbers (IP addresses), but humans prefer names (google.com). DNS translates names into numbers.\n\n"
         "• A Record: Points a name to an IPv4 address.\n"
-        "• MX Record: Directs emails to the right mail server.\n\n"
-        "DHCP (Dynamic Host Configuration Protocol): The Valet Parking\n"
-        "Instead of manually typing an IP address into every phone and laptop, DHCP hands them out automatically using the D.O.R.A process:\n"
+        "• MX Record: Directs emails to the right mail server.\n\n\n"
+        "DHCP (Dynamic Host Config Protocol): The Valet Parking\n"
+        "Instead of manually typing an IP address into every phone and laptop, DHCP hands them out automatically using the D.O.R.A process:\n\n"
         "1. Discover: Computer shouts 'I need an IP!'\n"
         "2. Offer: Server says 'Here is one you can use.'\n"
         "3. Request: Computer says 'I will take it!'\n"
         "4. Acknowledge: Server says 'It is yours for the next 24 hours.'"
     ),
     "Ch 6: T-Shoot": (
-        "TROUBLESHOOTING METHODOLOGY\n\n"
+        "TROUBLESHOOTING METHODOLOGY\n"
+        "--------------------------------------------------\n"
         "CompTIA wants you to fix problems in a very specific order. You must memorize these 7 steps:\n\n"
-        "1. Identify the problem: Talk to the user. Ask 'What changed?'\n"
-        "2. Establish a theory: Guess what is wrong, starting with the easiest stuff (Is it plugged in?).\n"
-        "3. Test the theory: Try your guess. If you are wrong, make a new theory.\n"
-        "4. Plan of action: Figure out how to fix it without breaking other things.\n"
-        "5. Implement the solution: Actually fix it (or escalate to your boss).\n"
-        "6. Verify functionality: Make sure it works, and put steps in place so it doesn't happen again.\n"
+        "1. Identify the problem: Talk to the user. Ask 'What changed?'\n\n"
+        "2. Establish a theory: Guess what is wrong, starting with the easiest stuff (Is it plugged in?).\n\n"
+        "3. Test the theory: Try your guess. If you are wrong, make a new theory.\n\n"
+        "4. Plan of action: Figure out how to fix it without breaking other things.\n\n"
+        "5. Implement the solution: Actually fix it (or escalate to your boss).\n\n"
+        "6. Verify functionality: Make sure it works, and put steps in place so it doesn't happen again.\n\n"
         "7. Document findings: Write down what you did so the next IT person knows."
     )
 }
@@ -132,7 +150,20 @@ class StudyTab(ttk.Frame):
         notes_frame = ttk.LabelFrame(self.paned, text="Chapter Summary")
         self.paned.add(notes_frame, weight=3)
         
-        notes_text = tk.Text(notes_frame, wrap=tk.WORD, font=("Helvetica", 11), bg="#f8f9fa", fg="#2c3e50", padx=15, pady=15)
+        # Added spacing1, spacing2, spacing3, and changed bg to pure white for better contrast
+        notes_text = tk.Text(
+            notes_frame, 
+            wrap=tk.WORD, 
+            font=("Helvetica", 11), 
+            bg="#ffffff", 
+            fg="#2c3e50", 
+            padx=20, 
+            pady=20, 
+            spacing1=6,  # Space before a new line
+            spacing2=4,  # Space between wrapped lines
+            spacing3=6,  # Space after a paragraph
+            relief=tk.FLAT
+        )
         notes_text.insert(tk.END, CHAPTER_CONTENT.get(chapter_name, "No content available."))
         notes_text.config(state=tk.DISABLED)
         notes_text.pack(fill=tk.BOTH, expand=True)
@@ -188,15 +219,15 @@ class StudyTab(ttk.Frame):
 def main():
     root = tk.Tk()
     root.title(f"Network+ Beginner's Study Guide - Build {APP_VERSION}")
-    # Increased height slightly to accommodate the new footer
-    root.geometry("650x730")
+    # Increased height to accommodate the spacing and new footer
+    root.geometry("700x780")
     
     # Configure a clean, modern theme
     style = ttk.Style()
     style.theme_use('clam')
     
     # Add a friendly welcome header
-    header_frame = tk.Frame(root, bg="#34495e", pady=10)
+    header_frame = tk.Frame(root, bg="#34495e", pady=15)
     header_frame.pack(fill=tk.X)
     tk.Label(header_frame, text="CompTIA Network+ Foundations", font=("Helvetica", 16, "bold"), fg="white", bg="#34495e").pack()
     tk.Label(header_frame, text="Learn the core concepts with simple analogies and flashcards.", font=("Helvetica", 10), fg="#bdc3c7", bg="#34495e").pack()
