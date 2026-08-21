@@ -4,7 +4,7 @@ from tkinter import ttk
 import random
 
 # --- App Metadata ---
-APP_VERSION = "1.0.9"
+APP_VERSION = "1.0.10"
 BUILD_DATE = "August 21, 2026"
 AUTHOR = "Matt-Réal Slaunwhite"
 
@@ -133,7 +133,7 @@ QUIZ_DATA = {
     ]
 }
 
-# --- Multiple Choice Test Bank ---
+# --- Multiple Choice Test Bank (20 Questions) ---
 PRACTICE_TEST_BANK = [
     {
         "q": "A network technician is configuring a firewall and needs to block unencrypted web traffic. Which port should be blocked?",
@@ -194,6 +194,66 @@ PRACTICE_TEST_BANK = [
         "options": ["Cat 5e", "Cat 6", "Cat 6a", "Cat 5"],
         "answer": "Cat 6a",
         "exp": "Cat 6a supports 10 Gbps up to 100 meters. Standard Cat 6 only supports 10 Gbps up to 55 meters."
+    },
+    {
+        "q": "What layer of the OSI model is responsible for opening, maintaining, and closing communication between two devices?",
+        "options": ["Layer 4 (Transport)", "Layer 5 (Session)", "Layer 6 (Presentation)", "Layer 7 (Application)"],
+        "answer": "Layer 5 (Session)",
+        "exp": "The Session layer (Layer 5) manages the dialogue and connections (sessions) between applications."
+    },
+    {
+        "q": "Which port is used by DNS to resolve domain names to IP addresses?",
+        "options": ["Port 25", "Port 53", "Port 67", "Port 110"],
+        "answer": "Port 53",
+        "exp": "DNS primarily uses Port 53 to translate hostnames into IP addresses."
+    },
+    {
+        "q": "Which device makes forwarding decisions based on IP addresses and connects different networks together?",
+        "options": ["Switch", "Hub", "Router", "Access Point"],
+        "answer": "Router",
+        "exp": "Routers operate at Layer 3 and forward packets based on logical IP addresses."
+    },
+    {
+        "q": "What is the CIDR notation for a subnet mask of 255.255.255.0?",
+        "options": ["/16", "/24", "/25", "/26"],
+        "answer": "/24",
+        "exp": "A /24 subnet mask uses 24 network bits, which translates to 255.255.255.0."
+    },
+    {
+        "q": "In the DHCP DORA process, what does the client send out to initially find a DHCP server?",
+        "options": ["Acknowledge", "Request", "Discover", "Offer"],
+        "answer": "Discover",
+        "exp": "The client broadcasts a DHCP Discover packet to locate available DHCP servers on the network."
+    },
+    {
+        "q": "After testing a theory to determine the cause of a problem, what is the NEXT step in the CompTIA troubleshooting methodology?",
+        "options": ["Document findings", "Verify full system functionality", "Establish a plan of action", "Implement the solution"],
+        "answer": "Establish a plan of action",
+        "exp": "Once a theory is confirmed, Step 4 is to establish a plan of action to resolve the problem and identify potential effects."
+    },
+    {
+        "q": "What is the maximum standard distance for Cat 5e and Cat 6a cables before signal degradation occurs?",
+        "options": ["100 meters", "55 meters", "10 meters", "500 meters"],
+        "answer": "100 meters",
+        "exp": "Cat 5e and Cat 6a have a maximum length of 100 meters (approx. 328 feet) for reliable data transmission."
+    },
+    {
+        "q": "Which of the following ports is used for secure, encrypted terminal access?",
+        "options": ["Port 21 (FTP)", "Port 22 (SSH)", "Port 23 (Telnet)", "Port 3389 (RDP)"],
+        "answer": "Port 22 (SSH)",
+        "exp": "Secure Shell (SSH) uses Port 22 to provide encrypted command-line access. Telnet (23) is unencrypted."
+    },
+    {
+        "q": "Which DNS record acts as an alias, pointing one domain name to another domain name?",
+        "options": ["A Record", "AAAA Record", "MX Record", "CNAME Record"],
+        "answer": "CNAME Record",
+        "exp": "A Canonical Name (CNAME) record maps an alias name to a true or canonical domain name."
+    },
+    {
+        "q": "What is the Protocol Data Unit (PDU) at Layer 2 of the OSI model?",
+        "options": ["Bit", "Frame", "Packet", "Segment"],
+        "answer": "Frame",
+        "exp": "Data is encapsulated into Frames at Layer 2 (Data Link layer)."
     }
 ]
 
@@ -305,7 +365,7 @@ class StudyTab(ttk.Frame):
 class PracticeTestTab(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
-        self.test_size = 5 # How many questions per test
+        self.test_size = 20 # Increased to 20 questions
         self.current_test = []
         self.current_q_index = 0
         self.score = 0
@@ -358,7 +418,7 @@ class PracticeTestTab(ttk.Frame):
         self.start_new_test()
 
     def start_new_test(self):
-        # Pull a random subset of questions
+        # Pull a random subset of questions (up to the max in the bank)
         self.current_test = random.sample(PRACTICE_TEST_BANK, min(self.test_size, len(PRACTICE_TEST_BANK)))
         self.current_q_index = 0
         self.score = 0
@@ -370,18 +430,17 @@ class PracticeTestTab(ttk.Frame):
         self.load_question()
         
     def load_question(self):
-        self.selected_answer.set("") # Clear radio selection
+        self.selected_answer.set("") 
         self.feedback_lbl.config(text="")
         self.exp_lbl.config(text="")
         self.btn_submit.config(state=tk.NORMAL)
         self.btn_next.config(state=tk.DISABLED)
         
-        # Enable radio buttons
         for rb in self.radio_btns:
             rb.config(state=tk.NORMAL)
         
         q_data = self.current_test[self.current_q_index]
-        self.progress_lbl.config(text=f"Question {self.current_q_index + 1} of {self.test_size} | Current Score: {self.score}")
+        self.progress_lbl.config(text=f"Question {self.current_q_index + 1} of {len(self.current_test)} | Current Score: {self.score}")
         self.lbl_question.config(text=q_data["q"])
         
         # Shuffle options so the correct answer isn't always in the same spot
@@ -393,7 +452,7 @@ class PracticeTestTab(ttk.Frame):
                 rb.config(text=options[i], value=options[i])
                 rb.pack(anchor="w", pady=5)
             else:
-                rb.pack_forget() # Hide if less than 4 options (though we designed for 4)
+                rb.pack_forget() 
 
     def submit_answer(self):
         selected = self.selected_answer.get()
@@ -418,16 +477,16 @@ class PracticeTestTab(ttk.Frame):
         self.exp_lbl.config(text=q_data["exp"])
         
         # Update score instantly
-        self.progress_lbl.config(text=f"Question {self.current_q_index + 1} of {self.test_size} | Current Score: {self.score}")
+        self.progress_lbl.config(text=f"Question {self.current_q_index + 1} of {len(self.current_test)} | Current Score: {self.score}")
         
         # If it was the last question, change the Next button to complete
-        if self.current_q_index >= self.test_size - 1:
+        if self.current_q_index >= len(self.current_test) - 1:
             self.btn_next.config(text="Finish Test")
 
     def next_question(self):
         self.current_q_index += 1
         
-        if self.current_q_index < self.test_size:
+        if self.current_q_index < len(self.current_test):
             self.btn_next.config(text="Next Question")
             self.load_question()
         else:
@@ -435,9 +494,9 @@ class PracticeTestTab(ttk.Frame):
             self.show_results()
             
     def show_results(self):
-        self.lbl_question.config(text=f"Test Complete!\n\nFinal Score: {self.score} out of {self.test_size}")
+        self.lbl_question.config(text=f"Test Complete!\n\nFinal Score: {self.score} out of {len(self.current_test)}")
         
-        percent = (self.score / self.test_size) * 100
+        percent = (self.score / len(self.current_test)) * 100
         if percent >= 80:
             msg = "Great job! You're ready for the exam."
             color = "#27ae60"
@@ -466,13 +525,13 @@ def main():
     style = ttk.Style()
     style.theme_use('clam')
     
-    # 1. Pack Header FIRST (Locks to top)
+    # 1. Pack Header FIRST
     header_frame = tk.Frame(root, bg="#34495e", pady=15)
     header_frame.pack(fill=tk.X, side=tk.TOP)
     tk.Label(header_frame, text="CompTIA Network+ Foundations", font=("Helvetica", 16, "bold"), fg="white", bg="#34495e").pack()
     tk.Label(header_frame, text="Learn the core concepts with simple analogies and flashcards.", font=("Helvetica", 10), fg="#bdc3c7", bg="#34495e").pack()
     
-    # 2. Pack Footer SECOND (Locks to bottom)
+    # 2. Pack Footer SECOND
     footer_frame = tk.Frame(root, bg="#ecf0f1", pady=5)
     footer_frame.pack(fill=tk.X, side=tk.BOTTOM)
     footer_text = f"Built by {AUTHOR} | {BUILD_DATE} | Build {APP_VERSION}"
