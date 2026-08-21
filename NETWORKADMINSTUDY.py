@@ -3,6 +3,11 @@ import tkinter as tk
 from tkinter import ttk
 import random
 
+# --- App Metadata ---
+APP_VERSION = "1.0.0"
+BUILD_DATE = "August 21, 2026"
+AUTHOR = "Matt-Réal Slaunwhite"
+
 # --- Data Structure for the App ---
 # Beginner-friendly explanations with analogies.
 
@@ -182,8 +187,9 @@ class StudyTab(ttk.Frame):
 
 def main():
     root = tk.Tk()
-    root.title("Network+ Beginner's Study Guide (Ch 1-6)")
-    root.geometry("650x700")
+    root.title(f"Network+ Beginner's Study Guide - Build {APP_VERSION}")
+    # Increased height slightly to accommodate the new footer
+    root.geometry("650x730")
     
     # Configure a clean, modern theme
     style = ttk.Style()
@@ -195,14 +201,21 @@ def main():
     tk.Label(header_frame, text="CompTIA Network+ Foundations", font=("Helvetica", 16, "bold"), fg="white", bg="#34495e").pack()
     tk.Label(header_frame, text="Learn the core concepts with simple analogies and flashcards.", font=("Helvetica", 10), fg="#bdc3c7", bg="#34495e").pack()
     
+    # Notebook (Tabs)
     notebook = ttk.Notebook(root)
     notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
     
-    # Generate the tabs dynamically based on our dictionary
     for chapter in CHAPTER_CONTENT.keys():
         tab = StudyTab(notebook, chapter)
         notebook.add(tab, text=chapter)
         
+    # --- Footer with Build Metadata ---
+    footer_frame = tk.Frame(root, bg="#ecf0f1", pady=5)
+    footer_frame.pack(fill=tk.X, side=tk.BOTTOM)
+    
+    footer_text = f"Built by {AUTHOR} | {BUILD_DATE} | Build {APP_VERSION}"
+    tk.Label(footer_frame, text=footer_text, font=("Helvetica", 8), fg="#7f8c8d", bg="#ecf0f1").pack()
+
     root.mainloop()
 
 if __name__ == "__main__":
