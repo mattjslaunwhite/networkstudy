@@ -4,13 +4,11 @@ from tkinter import ttk
 import random
 
 # --- App Metadata ---
-APP_VERSION = "1.0.1"
+APP_VERSION = "1.0.4"
 BUILD_DATE = "August 21, 2026"
 AUTHOR = "Matt-Réal Slaunwhite"
 
 # --- Data Structure for the App ---
-# Re-formatted with explicit spacing, bullet points, and capitalized headers for readability.
-
 CHAPTER_CONTENT = {
     "Ch 1: OSI Model": (
         "THE OSI MODEL (How Data Travels)\n"
@@ -142,15 +140,40 @@ class StudyTab(ttk.Frame):
         self.questions = QUIZ_DATA.get(chapter_name, [])
         self.current_q_index = 0
         
-        # Split layout: Notes on top, Quiz on bottom
-        self.paned = ttk.PanedWindow(self, orient=tk.VERTICAL)
-        self.paned.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        # --- Interactive Flashcard Section (Anchored to BOTTOM, Fixed Height) ---
+        quiz_frame = ttk.LabelFrame(self, text="Practice Flashcards")
+        # Pack this first, lock it to the bottom, and tell it NOT to expand
+        quiz_frame.pack(side=tk.BOTTOM, fill=tk.X, expand=False, padx=10, pady=(5, 10))
         
-        # --- Study Notes Section ---
-        notes_frame = ttk.LabelFrame(self.paned, text="Chapter Summary")
-        self.paned.add(notes_frame, weight=3)
+        # Divide the quiz frame into Left (Text) and Right (Buttons)
+        text_frame = ttk.Frame(quiz_frame)
+        text_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(20, 10), pady=15)
         
-        # Added spacing1, spacing2, spacing3, and changed bg to pure white for better contrast
+        btn_frame = ttk.Frame(quiz_frame)
+        btn_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(10, 20), pady=15)
+        
+        # Enforce a minimum height for the text area so it doesn't jump around when questions change
+        self.lbl_question = tk.Label(text_frame, text="", font=("Helvetica", 12, "bold"), wraplength=450, justify="left", height=2)
+        self.lbl_question.pack(anchor="w", pady=(5, 5))
+        
+        self.lbl_answer = tk.Label(text_frame, text="", font=("Helvetica", 12, "italic"), fg="#27ae60", wraplength=450, justify="left", height=2)
+        self.lbl_answer.pack(anchor="w", pady=(0, 5))
+        
+        # Styled Buttons (Stacked Vertically on the Right)
+        style = ttk.Style()
+        style.configure('Action.TButton', font=('Helvetica', 10, 'bold'))
+        
+        self.btn_show = ttk.Button(btn_frame, text="Show Answer", command=self.show_answer, style='Action.TButton')
+        self.btn_show.pack(fill=tk.X, pady=(5, 5))
+        
+        self.btn_next = ttk.Button(btn_frame, text="Next Question", command=self.next_question, style='Action.TButton')
+        self.btn_next.pack(fill=tk.X, pady=(5, 5))
+
+        # --- Study Notes Section (Anchored to TOP, Expands to fill rest) ---
+        notes_frame = ttk.LabelFrame(self, text="Chapter Summary")
+        # Pack this second, let it take up all remaining space
+        notes_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=10, pady=(10, 5))
+        
         notes_text = tk.Text(
             notes_frame, 
             wrap=tk.WORD, 
@@ -159,37 +182,14 @@ class StudyTab(ttk.Frame):
             fg="#2c3e50", 
             padx=20, 
             pady=20, 
-            spacing1=6,  # Space before a new line
-            spacing2=4,  # Space between wrapped lines
-            spacing3=6,  # Space after a paragraph
+            spacing1=6,
+            spacing2=4,
+            spacing3=6,
             relief=tk.FLAT
         )
         notes_text.insert(tk.END, CHAPTER_CONTENT.get(chapter_name, "No content available."))
         notes_text.config(state=tk.DISABLED)
         notes_text.pack(fill=tk.BOTH, expand=True)
-        
-        # --- Interactive Flashcard Section ---
-        quiz_frame = ttk.LabelFrame(self.paned, text="Practice Flashcards")
-        self.paned.add(quiz_frame, weight=1)
-        
-        self.lbl_question = tk.Label(quiz_frame, text="", font=("Helvetica", 12, "bold"), wraplength=450, justify="center")
-        self.lbl_question.pack(pady=(20, 10))
-        
-        self.lbl_answer = tk.Label(quiz_frame, text="", font=("Helvetica", 12, "italic"), fg="#27ae60", wraplength=450, justify="center")
-        self.lbl_answer.pack(pady=(0, 20))
-        
-        btn_frame = ttk.Frame(quiz_frame)
-        btn_frame.pack(pady=5)
-        
-        # Styled Buttons
-        style = ttk.Style()
-        style.configure('Action.TButton', font=('Helvetica', 10, 'bold'))
-        
-        self.btn_show = ttk.Button(btn_frame, text="Show Answer", command=self.show_answer, style='Action.TButton')
-        self.btn_show.grid(row=0, column=0, padx=10)
-        
-        self.btn_next = ttk.Button(btn_frame, text="Next Question", command=self.next_question, style='Action.TButton')
-        self.btn_next.grid(row=0, column=1, padx=10)
         
         # Load the first question
         random.shuffle(self.questions)
@@ -219,7 +219,7 @@ class StudyTab(ttk.Frame):
 def main():
     root = tk.Tk()
     root.title(f"Network+ Beginner's Study Guide - Build {APP_VERSION}")
-    # Increased height to accommodate the spacing and new footer
+    # Setting a solid starting size that perfectly proportions the 2/3 and 1/3 split
     root.geometry("700x780")
     
     # Configure a clean, modern theme
