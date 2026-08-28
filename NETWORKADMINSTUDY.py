@@ -4,7 +4,7 @@ from tkinter import ttk
 import random
 
 # --- App Metadata ---
-APP_VERSION = "1.3.0"
+APP_VERSION = "1.4.0"
 BUILD_DATE = "August 28, 2026"
 AUTHOR = "Matt-Réal Slaunwhite"
 
@@ -81,7 +81,7 @@ CHAPTER_CONTENT = {
         "• 5060/5061 (SIP - TCP/UDP): Session Initiation Protocol (VoIP signaling/setup)."
     ),
     "Ch 3: Hardware": (
-        "NETWORK MEDIA, CONNECTORS & HARDWARE ARCHITECTURE\n"
+        "NETWORK MEDIA, HARDWARE & VLAN ARCHITECTURE\n"
         "----------------------------------------------------------------------\n"
         "COPPER CABLING (Twisted Pair - T568A / T568B Standard):\n"
         "• Cat 5e: 1 Gbps up to 100 meters (100 MHz bandwidth).\n"
@@ -99,7 +99,20 @@ CHAPTER_CONTENT = {
         "• Switch (Layer 2): Inspects MAC addresses to selectively forward frames. Breaks up collision domains (each port is its own collision domain). Retains 1 broadcast domain per VLAN.\n"
         "• Router (Layer 3): Routes IP packets between distinct subnets/networks. Breaks up both collision domains and broadcast domains.\n"
         "• Layer 3 Switch: High-speed switch capable of hardware-based (ASIC) IP routing between internal VLANs.\n"
-        "• Transceivers: SFP (1 Gbps), SFP+ (10 Gbps), QSFP+ (40 Gbps), QSFP28 (100 Gbps)."
+        "• Transceivers: SFP (1 Gbps), SFP+ (10 Gbps), QSFP+ (40 Gbps), QSFP28 (100 Gbps).\n\n"
+        "VIRTUAL LOCAL AREA NETWORKS (VLANs) & TRUNKING:\n"
+        "• Broadcast Domain Segmentation: VLANs partition a physical switch into distinct logical broadcast domains, improving security, reducing broadcast traffic, and isolating departments.\n"
+        "• Access Ports: Assigned to a single VLAN. Forwards untagged Ethernet frames to end-user devices (PCs, printers).\n"
+        "• Trunk Ports: Carries traffic for multiple VLANs across a single physical link between switches or between a switch and a router.\n"
+        "• IEEE 802.1Q Tagging: The standard trunking protocol that inserts a 4-byte (32-bit) tag into the Ethernet frame header (contains the 12-bit VLAN ID [VID], supporting VLANs 1 to 4094, and 3-bit CoS priority).\n"
+        "• Native VLAN: The designated VLAN on an 802.1Q trunk that carries untagged traffic (default is VLAN 1; best practice is to change it to an unused VLAN ID to mitigate VLAN hopping).\n"
+        "• Voice VLAN: Allows an access port to support an IP desk phone and a daisy-chained PC simultaneously. The phone uses a tagged Voice VLAN (prioritized via CoS/QoS), while the PC sends untagged data on the native access VLAN.\n"
+        "• Inter-VLAN Routing:\n"
+        "  - Router-on-a-Stick (ROAS): A single physical router interface connects to a switch trunk port using logical sub-interfaces (e.g., Gig0/0.10, Gig0/0.20), each tagged with 802.1Q encapsulation.\n"
+        "  - Layer 3 Switch / SVI: Uses Switch Virtual Interfaces (SVIs) (e.g., 'interface vlan 10') to route packets between VLANs internally at hardware line rate without bottlenecking an external router link.\n"
+        "• VLAN Security:\n"
+        "  - Switch Spoofing: An attacker negotiates a trunk link using Dynamic Trunking Protocol (DTP). Mitigated by disabling DTP on access ports (`switchport mode access` / `switchport nonegotiate`).\n"
+        "  - Double Tagging: An attacker sends frames with two 802.1Q tags to traverse the native VLAN. Mitigated by setting the native VLAN to an unused ID and tagging native traffic."
     ),
     "Ch 4: Subnetting": (
         "SUBNETTING, IPV4 ARCHITECTURE & THE LEADING-BIT RULE\n"
@@ -332,6 +345,7 @@ CHAPTER_CONTENT = {
 # --- Comprehensive Glossary ---
 GLOSSARY_TERMS = {
     "AAA (Authentication, Authorization, Accounting)": "Framework for controlling access to network resources, verifying identity, and tracking user activities (e.g., RADIUS, TACACS+).",
+    "Access Port": "A switch port configured to carry untagged Ethernet traffic for only one single VLAN (typically connects to end-user PCs or printers).",
     "ACL (Access Control List)": "Sequential set of permit/deny rules applied to IP addresses, ports, or protocols on routers and firewalls.",
     "Administrative Distance (AD)": "A value between 0-255 defining the trustworthiness of a routing source. Lower values are preferred (e.g., Connected=0, Static=1, OSPF=110).",
     "APIPA (Automatic Private IP Addressing)": "Automatic link-local IPv4 address assignment in the 169.254.0.0/16 range when a DHCP server is unreachable.",
@@ -348,6 +362,7 @@ GLOSSARY_TERMS = {
     "DSCP (Differentiated Services Code Point)": "A 6-bit field in the IPv4/IPv6 packet header used to classify and prioritize Layer 3 traffic for Quality of Service (QoS).",
     "FHRP (First Hop Redundancy Protocol)": "Protocols like HSRP, VRRP, and GLBP that provide default gateway redundancy using a shared virtual IP address.",
     "ICMP (Internet Control Message Protocol)": "Network layer protocol used for network diagnostics, error reporting, and utilities like ping and traceroute.",
+    "IEEE 802.1Q": "The networking standard supporting VLAN tagging on Ethernet frames across trunk links by inserting a 4-byte identifier into the header.",
     "IPsec (Internet Protocol Security)": "Suite of protocols (AH, ESP, IKE) providing authentication, integrity, and encryption for Layer 3 network traffic and VPNs.",
     "Jumbo Frame": "Ethernet frame with a payload greater than the standard 1,500-byte MTU, typically up to 9,000 bytes, used in SANs to reduce CPU overhead.",
     "LACP (Link Aggregation Control Protocol)": "IEEE 802.3ad/802.1ax standard that bundles multiple physical network links into a single logical channel for redundancy and throughput.",
@@ -357,12 +372,14 @@ GLOSSARY_TERMS = {
     "MTU (Maximum Transmission Unit)": "The largest size packet or frame (in bytes) that can be transmitted over a physical network interface without fragmentation (default 1500 bytes for Ethernet).",
     "NAC (Network Access Control)": "Security solution enforcing endpoint compliance and security posture checks prior to granting network access via 802.1X.",
     "NAT (Network Address Translation)": "Translates private (RFC 1918) IP addresses to a public routable IP address for internet access (PAT / NAT Overload).",
+    "Native VLAN": "The designated VLAN on an 802.1Q trunk link that transmits frames without an 802.1Q tag (default is VLAN 1).",
     "OSPF (Open Shortest Path First)": "A standard interior gateway link-state routing protocol utilizing Dijkstra's algorithm to calculate the shortest path through a network area.",
     "PDU (Protocol Data Unit)": "Unit of data specified in a given layer of the OSI model: Bits (L1), Frames (L2), Packets (L3), Segments/Datagrams (L4), Data (L5-7).",
     "PoE (Power over Ethernet)": "Standards (802.3af 15.4W, 802.3at PoE+ 30W, 802.3bt 60W-90W) that pass electrical power alongside data on twisted-pair Ethernet cables.",
     "Port Security": "Layer 2 switch feature that restricts port access to specific learned or configured MAC addresses to block unauthorized devices.",
     "QoS (Quality of Service)": "Techniques prioritizing latency-sensitive network traffic (VoIP, video) using tagging mechanisms like DiffServ, CoS, and DSCP.",
     "RADIUS / TACACS+": "Centralized AAA protocols. RADIUS combines authentication/authorization using UDP; TACACS+ separates AAA and encrypts the full payload over TCP port 49.",
+    "Router-on-a-Stick (ROAS)": "Inter-VLAN routing configuration where a single physical router interface connects to a switch trunk port using sub-interfaces tagged with 802.1Q.",
     "RSTP (Rapid Spanning Tree Protocol)": "IEEE 802.1w protocol that prevents Layer 2 switching loops while converging topology changes significantly faster than legacy 802.1D STP.",
     "SD-WAN (Software-Defined Wide Area Network)": "An overlay architecture that dynamically and intelligently routes traffic across multiple WAN transport connections based on performance.",
     "SDN (Software-Defined Networking)": "Architecture decoupling the network control plane (decision-making) from the data plane (underlying packet forwarding).",
@@ -370,7 +387,9 @@ GLOSSARY_TERMS = {
     "SNMP (Simple Network Management Protocol)": "Application-layer protocol for monitoring and configuring network devices via MIB queries (UDP 161) and event Traps (UDP 162).",
     "Spine-and-Leaf": "Two-tier data center switching architecture where every leaf switch connects to every spine switch, optimizing east-west traffic.",
     "Syslog": "Standard protocol logging event notifications from network infrastructure to a central server over UDP port 514.",
+    "Trunk Port": "A switch port configured to carry traffic for multiple VLANs simultaneously across switches using IEEE 802.1Q encapsulation.",
     "VLAN (Virtual Local Area Network)": "Logical partition of a physical Layer 2 switch into multiple distinct broadcast domains (standardized by IEEE 802.1Q tagging).",
+    "Voice VLAN": "A specialized VLAN carrying prioritized voice traffic (VoIP) alongside standard untagged PC data on a single access switch port.",
     "VPN (Virtual Private Network)": "Encrypted tunnel extending a private network across a public network to secure communications.",
     "VRRP (Virtual Router Redundancy Protocol)": "Open-standard FHRP providing automatic assignment of available IP routers to participating hosts.",
     "WPA3 (Wi-Fi Protected Access 3)": "Current wireless security standard mandating Protected Management Frames and replacing PSK with SAE to prevent dictionary attacks.",
@@ -396,12 +415,13 @@ QUIZ_DATA = {
         ("What port is used for secure, encrypted web browsing?", "Port 443 (HTTPS)")
     ],
     "Ch 3: Hardware": [
-        ("What is the maximum distance of Cat 6 cable when running at 10 Gbps speeds?", "55 meters (Cat 6a supports 10 Gbps up to 100m)"),
+        ("What is the standard IEEE protocol for tagging Ethernet frames across VLAN trunk links?", "IEEE 802.1Q (inserts a 4-byte tag with a 12-bit VLAN ID)"),
+        ("What is the difference between an Access Port and a Trunk Port?", "Access ports carry untagged traffic for 1 VLAN; Trunk ports carry tagged traffic for multiple VLANs."),
+        ("What happens to untagged frames passing over an 802.1Q trunk link?", "They are forwarded onto the designated Native VLAN (default VLAN 1)."),
+        ("What is Router-on-a-Stick (ROAS)?", "Inter-VLAN routing using a single physical router interface divided into logical 802.1Q sub-interfaces."),
         ("What type of cable jacket is required for installation in drop ceilings and air ducts?", "Plenum-rated jacket (CMP)"),
         ("Which fiber optic type uses lasers for long-distance runs and has a yellow jacket?", "Single-Mode Fiber (SMF)"),
-        ("What device breaks up collision domains per-port while maintaining one broadcast domain?", "A Layer 2 Switch"),
-        ("What standard transceiver form-factor supports 10 Gbps speeds?", "SFP+"),
-        ("What is the primary difference between a Hub and a Switch?", "A Hub is Layer 1 and shares bandwidth; a Switch is Layer 2 and routes by MAC.")
+        ("What device breaks up collision domains per-port while maintaining one broadcast domain?", "A Layer 2 Switch")
     ],
     "Ch 4: Subnetting": [
         ("How are the starting decimal numbers for Class A, B, and C determined in binary?", "By leading bits: Class A starts with '0', Class B with '10', Class C with '110'."),
@@ -492,7 +512,10 @@ QUIZ_DATA = {
 
 # --- Comprehensive Practice Exam Bank (Categorized) ---
 PRACTICE_TEST_BANK = [
-    # --- PART 1: CHAPTERS 1-6 (Foundations) ---
+    # --- PART 1: CHAPTERS 1-6 (Foundations & VLANs) ---
+    {"cat": "1-6", "q": "Which networking standard is used to insert a 4-byte VLAN identification tag into an Ethernet frame header on trunk links?", "options": ["IEEE 802.1X", "IEEE 802.1Q", "IEEE 802.3ad", "IEEE 802.11ac"], "answer": "IEEE 802.1Q", "exp": "IEEE 802.1Q is the industry standard for VLAN tagging, inserting a 32-bit (4-byte) field containing a 12-bit VLAN ID."},
+    {"cat": "1-6", "q": "A network technician needs to route traffic between multiple VLANs using a single physical router interface. What configuration is required?", "options": ["Router-on-a-Stick with 802.1Q sub-interfaces", "Dynamic ARP Inspection", "LACP link aggregation", "Split Horizon with Poison Reverse"], "answer": "Router-on-a-Stick with 802.1Q sub-interfaces", "exp": "Router-on-a-Stick connects a single router interface to a switch trunk port, splitting the interface into logical 802.1Q-tagged sub-interfaces."},
+    {"cat": "1-6", "q": "What happens to untagged traffic traversing an IEEE 802.1Q trunk link?", "options": ["It is dropped automatically", "It is placed onto the Native VLAN", "It is forwarded to the management VLAN", "It is encapsulated into an IPsec tunnel"], "answer": "It is placed onto the Native VLAN", "exp": "802.1Q trunk links place all untagged frames onto the designated Native VLAN (default VLAN 1)."},
     {"cat": "1-6", "q": "According to the binary leading-bit rule for classful addressing, what binary value must the first octet of a Class B IP address start with?", "options": ["0", "10", "110", "1110"], "answer": "10", "exp": "Class B addresses always begin with the leading binary bits '10', establishing the 128 to 191 decimal boundary."},
     {"cat": "1-6", "q": "A network engineer needs to configure an Access Control List (ACL) to block unencrypted web browsing traffic. Which port should be filtered?", "options": ["Port 443", "Port 80", "Port 22", "Port 53"], "answer": "Port 80", "exp": "Port 80 is used by HTTP for cleartext web traffic. Port 443 is HTTPS (encrypted)."},
     {"cat": "1-6", "q": "At which layer of the OSI model does a standard Layer 2 Ethernet switch make its forwarding decisions?", "options": ["Layer 1 (Physical)", "Layer 2 (Data Link)", "Layer 3 (Network)", "Layer 4 (Transport)"], "answer": "Layer 2 (Data Link)", "exp": "Layer 2 switches evaluate Destination MAC addresses inside Ethernet frame headers to make forwarding decisions."},
@@ -761,13 +784,12 @@ class PracticeTestTab(ttk.Frame):
         
         tk.Label(self.start_frame, text="Select Exam Study Domain:", font=("Helvetica", 12, "bold")).pack(pady=(0, 15))
         
-        # Calculate pool counts
         cnt_1_6 = len([q for q in PRACTICE_TEST_BANK if q["cat"] == "1-6"])
         cnt_7_10 = len([q for q in PRACTICE_TEST_BANK if q["cat"] == "7-10"])
         cnt_11_end = len([q for q in PRACTICE_TEST_BANK if q["cat"] == "11-end"])
         cnt_full = len(PRACTICE_TEST_BANK)
 
-        ttk.Radiobutton(self.start_frame, text=f"Part 1: Foundations (Ch 1–6) — {cnt_1_6} Questions", variable=self.exam_mode, value="1-6").pack(anchor="w", padx=120, pady=5)
+        ttk.Radiobutton(self.start_frame, text=f"Part 1: Foundations & VLANs (Ch 1–6) — {cnt_1_6} Questions", variable=self.exam_mode, value="1-6").pack(anchor="w", padx=120, pady=5)
         ttk.Radiobutton(self.start_frame, text=f"Part 2: Wireless, Cloud & Security (Ch 7–10) — {cnt_7_10} Questions", variable=self.exam_mode, value="7-10").pack(anchor="w", padx=120, pady=5)
         ttk.Radiobutton(self.start_frame, text=f"Part 3: Routing, Hardening & Arch (Ch 11–14) — {cnt_11_end} Questions", variable=self.exam_mode, value="11-end").pack(anchor="w", padx=120, pady=5)
         ttk.Radiobutton(self.start_frame, text=f"Full Practice Exam (All Chapters Combined) — {cnt_full} Questions", variable=self.exam_mode, value="full").pack(anchor="w", padx=120, pady=5)
@@ -913,11 +935,192 @@ class PracticeTestTab(ttk.Frame):
         self.btn_next.pack_forget()
         self.btn_restart.pack(side=tk.LEFT)
 
+class GlobalSearchTab(ttk.Frame):
+    def __init__(self, parent, notebook_ref, chapter_map):
+        super().__init__(parent)
+        self.notebook = notebook_ref
+        self.chapter_map = chapter_map
+        
+        search_frame = ttk.Frame(self)
+        search_frame.pack(fill=tk.X, padx=20, pady=(15, 10))
+        
+        tk.Label(search_frame, text="Search All Content:", font=("Helvetica", 11, "bold")).pack(side=tk.LEFT, padx=(0, 10))
+        
+        self.search_var = tk.StringVar()
+        self.search_var.trace("w", self.perform_search)
+        self.search_entry = ttk.Entry(search_frame, textvariable=self.search_var, font=("Helvetica", 11))
+        self.search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        
+        self.lbl_count = tk.Label(search_frame, text="Type to search...", font=("Helvetica", 9, "italic"), fg="#7f8c8d")
+        self.lbl_count.pack(side=tk.RIGHT, padx=(10, 0))
+
+        paned = ttk.PanedWindow(self, orient=tk.VERTICAL)
+        paned.pack(fill=tk.BOTH, expand=True, padx=20, pady=(0, 15))
+        
+        # Results Table
+        tree_frame = ttk.Frame(paned)
+        paned.add(tree_frame, weight=2)
+        
+        columns = ("Type", "Location", "Match")
+        self.tree = ttk.Treeview(tree_frame, columns=columns, show="headings", height=8)
+        self.tree.heading("Type", text="Type")
+        self.tree.heading("Location", text="Location")
+        self.tree.heading("Match", text="Matched Snippet")
+        
+        self.tree.column("Type", width=110, anchor="center")
+        self.tree.column("Location", width=140)
+        self.tree.column("Match", width=580)
+        
+        scrollbar = ttk.Scrollbar(tree_frame, orient=tk.VERTICAL, command=self.tree.yview)
+        self.tree.configure(yscroll=scrollbar.set)
+        self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        self.tree.bind("<<TreeviewSelect>>", self.on_result_select)
+        self.tree.bind("<Double-1>", self.jump_to_source)
+        
+        # Preview Pane
+        preview_frame = ttk.LabelFrame(paned, text="Matched Context / Details (Double-click item to Jump)")
+        paned.add(preview_frame, weight=3)
+        
+        self.txt_preview = tk.Text(
+            preview_frame,
+            wrap=tk.WORD,
+            font=("Helvetica", 10),
+            padx=15,
+            pady=15,
+            spacing1=4,
+            spacing2=2,
+            relief=tk.FLAT,
+            state=tk.DISABLED
+        )
+        self.txt_preview.pack(fill=tk.BOTH, expand=True, side=tk.LEFT)
+        
+        btn_bar = ttk.Frame(preview_frame)
+        btn_bar.pack(side=tk.RIGHT, fill=tk.Y, padx=10, pady=10)
+        
+        self.btn_jump = ttk.Button(btn_bar, text="Jump to Tab", command=self.jump_to_source, state=tk.DISABLED)
+        self.btn_jump.pack(anchor="n")
+        
+        self.stored_results = []
+
+    def update_theme(self, bg_text, fg_main, bg_alt):
+        self.txt_preview.config(bg=bg_text, fg=fg_main)
+
+    def perform_search(self, *args):
+        query = self.search_var.get().strip().lower()
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+            
+        self.stored_results.clear()
+        self.txt_preview.config(state=tk.NORMAL)
+        self.txt_preview.delete(1.0, tk.END)
+        self.txt_preview.config(state=tk.DISABLED)
+        self.btn_jump.config(state=tk.DISABLED)
+        
+        if not query or len(query) < 2:
+            self.lbl_count.config(text="Type at least 2 characters...")
+            return
+
+        matches = []
+        
+        # 1. Search Chapter Summaries
+        for ch, text in CHAPTER_CONTENT.items():
+            if query in text.lower() or query in ch.lower():
+                snippet = self.extract_snippet(text, query)
+                matches.append({
+                    "type": "Chapter",
+                    "loc": ch.split(":")[0],
+                    "match": snippet,
+                    "full": f"--- {ch} ---\n\n{text}",
+                    "tab_target": ch.split(":")[0]
+                })
+
+        # 2. Search Flashcards
+        for ch, cards in QUIZ_DATA.items():
+            for q, a in cards:
+                if query in q.lower() or query in a.lower():
+                    matches.append({
+                        "type": "Flashcard",
+                        "loc": ch.split(":")[0],
+                        "match": f"Q: {q}",
+                        "full": f"--- Flashcard ({ch}) ---\n\nQ: {q}\n\nA: {a}",
+                        "tab_target": ch.split(":")[0]
+                    })
+
+        # 3. Search Glossary
+        for term, defn in GLOSSARY_TERMS.items():
+            if query in term.lower() or query in defn.lower():
+                matches.append({
+                    "type": "Glossary",
+                    "loc": "Glossary",
+                    "match": term,
+                    "full": f"--- Glossary Term ---\n\n{term}\n\n{defn}",
+                    "tab_target": "📖 Glossary"
+                })
+
+        # 4. Search Exam Bank
+        for idx, q in enumerate(PRACTICE_TEST_BANK):
+            q_text = q["q"]
+            exp = q["exp"]
+            ans = q["answer"]
+            opts = " | ".join(q["options"])
+            if query in q_text.lower() or query in exp.lower() or query in ans.lower():
+                matches.append({
+                    "type": "Exam Q",
+                    "loc": f"Domain {q['cat']}",
+                    "match": q_text[:80] + "...",
+                    "full": f"--- Practice Exam Question (Domain {q['cat']}) ---\n\nQ: {q_text}\n\nOptions: {opts}\n\nAnswer: {ans}\n\nExplanation: {exp}",
+                    "tab_target": "🎓 Exam Simulator"
+                })
+
+        self.stored_results = matches
+        self.lbl_count.config(text=f"{len(matches)} match{'es' if len(matches) != 1 else ''} found")
+
+        for idx, m in enumerate(matches):
+            self.tree.insert("", "end", iid=str(idx), values=(f"[{m['type']}]", m['loc'], m['match']))
+
+    def extract_snippet(self, text, query):
+        idx = text.lower().find(query)
+        if idx == -1:
+            return text[:90].replace("\n", " ") + "..."
+        start = max(0, idx - 30)
+        end = min(len(text), idx + len(query) + 50)
+        snippet = text[start:end].replace("\n", " ").strip()
+        return ("..." if start > 0 else "") + snippet + ("..." if end < len(text) else "")
+
+    def on_result_select(self, event):
+        selected = self.tree.selection()
+        if not selected:
+            return
+        idx = int(selected[0])
+        data = self.stored_results[idx]
+        
+        self.txt_preview.config(state=tk.NORMAL)
+        self.txt_preview.delete(1.0, tk.END)
+        self.txt_preview.insert(tk.END, data["full"])
+        self.txt_preview.config(state=tk.DISABLED)
+        self.btn_jump.config(state=tk.NORMAL)
+
+    def jump_to_source(self, event=None):
+        selected = self.tree.selection()
+        if not selected:
+            return
+        idx = int(selected[0])
+        data = self.stored_results[idx]
+        target_tab = data["tab_target"]
+        
+        # Locate tab index by text
+        for tab_id in self.notebook.tabs():
+            if self.notebook.tab(tab_id, "text") == target_tab:
+                self.notebook.select(tab_id)
+                break
+
 class NetworkStudyApp:
     def __init__(self, root):
         self.root = root
         self.root.title(f"Network+ Comprehensive Study System - Build {APP_VERSION}")
-        self.root.geometry("920x840")
+        self.root.geometry("960x860")
         
         self.is_dark_mode = False
         self.style = ttk.Style()
@@ -945,6 +1148,10 @@ class NetworkStudyApp:
         self.notebook = ttk.Notebook(root)
         self.notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
         
+        # Global Search Tab (First Tab)
+        self.search_tab = GlobalSearchTab(self.notebook, self.notebook, CHAPTER_CONTENT)
+        self.notebook.add(self.search_tab, text="🔍 Search All")
+
         self.chapter_tabs = []
         for chapter in CHAPTER_CONTENT.keys():
             tab = StudyTab(self.notebook, chapter)
@@ -995,9 +1202,13 @@ class NetworkStudyApp:
         self.style.configure('TLabel', background=bg_main, foreground=fg_main)
         self.style.configure('TButton', background=bg_alt, foreground=fg_main)
         self.style.configure('TNotebook', background=bg_main)
-        self.style.configure('TNotebook.Tab', background=bg_alt, foreground=fg_main, padding=[6, 2])
+        self.style.configure('TNotebook.Tab', background=bg_alt, foreground=fg_main, padding=[5, 2])
         self.style.map('TNotebook.Tab', background=[('selected', bg_main)])
         
+        self.style.configure("Treeview", background=bg_text, foreground=fg_main, fieldbackground=bg_text)
+        self.style.configure("Treeview.Heading", background=bg_alt, foreground=fg_main)
+
+        self.search_tab.update_theme(bg_text, fg_main, bg_alt)
         for tab in self.chapter_tabs:
             tab.update_theme(bg_text, fg_main, accent_fg)
             
