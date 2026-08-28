@@ -4,7 +4,7 @@ from tkinter import ttk
 import random
 
 # --- App Metadata ---
-APP_VERSION = "1.2.1"
+APP_VERSION = "1.3.0"
 BUILD_DATE = "August 28, 2026"
 AUTHOR = "Matt-Réal Slaunwhite"
 
@@ -260,6 +260,72 @@ CHAPTER_CONTENT = {
         "• Full Backup: Copies all selected data and clears the archive bit. Slowest backup, fastest single-step restore.\n"
         "• Incremental Backup: Backs up only files modified since the last Full OR Incremental backup; clears archive bit. Fast backup, slow restore (requires Full + all Incrementals in sequence).\n"
         "• Differential Backup: Backs up all files modified since the last Full backup; does NOT clear archive bit. Moderate backup, fast restore (requires Full + last Differential)."
+    ),
+    "Ch 11: Routing & WAN": (
+        "ROUTING PROTOCOLS & WAN TECHNOLOGIES\n"
+        "----------------------------------------------------------------------\n"
+        "ROUTING CONCEPTS & ADMINISTRATIVE DISTANCE (AD):\n"
+        "• Administrative Distance: Metric of believability (Lower AD is preferred).\n"
+        "  - Connected: 0 | Static Route: 1 | eBGP: 20 | EIGRP (Internal): 90 | OSPF: 110 | RIP: 120 | iBGP: 200.\n\n"
+        "INTERIOR ROUTING PROTOCOLS (IGP):\n"
+        "• Distance-Vector (RIP): Uses hop count as its metric (max 15 hops; 16 is unreachable). Slow convergence.\n"
+        "• Link-State (OSPF - Open Shortest Path First): Uses Dijkstra's SPF algorithm and link cost (bandwidth). Fast convergence, area-based hierarchy (Area 0 Backbone).\n"
+        "• Advanced Distance-Vector / Hybrid (EIGRP): Cisco proprietary/open standard. Uses composite metric (Bandwidth + Delay). Extremely fast convergence using DUAL.\n\n"
+        "EXTERIOR ROUTING PROTOCOLS (EGP):\n"
+        "• BGP (Border Gateway Protocol - TCP 179): The path-vector protocol connecting Autonomous Systems (AS) across the global Internet.\n\n"
+        "WAN TECHNOLOGIES:\n"
+        "• MPLS (Multiprotocol Label Switching): High-speed Layer 2.5 carrier WAN using labels for forwarding instead of full IP lookups.\n"
+        "• SD-WAN (Software-Defined WAN): Dynamically routes traffic across broadband, cellular, and MPLS based on real-time latency/jitter.\n"
+        "• Metro Ethernet: Connecting enterprise branches across a metropolitan area using native Ethernet transport.\n"
+        "• Satellite (LEO / GEO): Low Earth Orbit (e.g., Starlink) provides low latency (~30ms); Geostationary (GEO) suffers high latency (~600ms)."
+    ),
+    "Ch 12: Optimization": (
+        "NETWORK PERFORMANCE, HIGH AVAILABILITY & QOS\n"
+        "----------------------------------------------------------------------\n"
+        "TRAFFIC SHAPING & QUALITY OF SERVICE (QoS):\n"
+        "• Traffic Shaping / Policing: Delaying or dropping non-critical packets to guarantee bandwidth for critical services (VoIP).\n"
+        "• Classification & Marking:\n"
+        "  - Layer 2: CoS (Class of Service) inside 802.1Q tag (3 bits, 0-7).\n"
+        "  - Layer 3: DiffServ / DSCP (Differentiated Services Code Point - 6 bits inside IP header; e.g., EF = Expedited Forwarding for VoIP).\n\n"
+        "HIGH AVAILABILITY & REDUNDANCY:\n"
+        "• First Hop Redundancy Protocols (FHRP):\n"
+        "  - HSRP (Hot Standby Router Protocol): Cisco proprietary; provides active/standby router gateway redundancy.\n"
+        "  - VRRP (Virtual Router Redundancy Protocol): Open standard equivalent to HSRP.\n"
+        "  - GLBP (Gateway Load Balancing Protocol): Cisco proprietary; active/active gateway load balancing.\n"
+        "• Link Aggregation (LACP - 802.3ad/802.1ax): Bundles multiple physical switch links into a single logical channel for combined throughput and link failover.\n"
+        "• Load Balancers: Distributes application traffic across server pools using algorithms (Round Robin, Least Connections, IP Hash, Weighted)."
+    ),
+    "Ch 13: Hardening": (
+        "PHYSICAL SECURITY, DEVICE HARDENING & ORGANIZATIONAL POLICIES\n"
+        "----------------------------------------------------------------------\n"
+        "LAYER 2 SWITCH HARDENING:\n"
+        "• Port Security: Restricts interface traffic to specific MAC addresses (Static or Sticky MAC) and disables the port upon violation (err-disable).\n"
+        "• DHCP Snooping: Distinguishes between trusted (DHCP server) and untrusted ports to prevent rogue DHCP server attacks.\n"
+        "• Dynamic ARP Inspection (DAI): Validates ARP packets against the DHCP Snooping database to prevent ARP poisoning/spoofing.\n"
+        "• BPDU Guard: Disables STP-enabled access ports if a switch (BPDU packet) is plugged in to protect the STP topology.\n\n"
+        "PHYSICAL & ENVIRONMENTAL SECURITY:\n"
+        "• Environmental Controls: HVAC hot-aisle/cold-aisle containment to optimize cooling.\n"
+        "• Fire Suppression: Wet-pipe (water in pipes) vs. Dry-pipe (water held back until heat activates) vs. Clean-Agent Gas (FM-200/Inergen for electrical safety).\n\n"
+        "GOVERNANCE & ORGANIZATIONAL POLICIES:\n"
+        "• AUP (Acceptable Use Policy): Defines permissible user activities on enterprise hardware and networks.\n"
+        "• NDA (Non-Disclosure Agreement): Protects confidential proprietary business data.\n"
+        "• SLA (Service Level Agreement): Contractually defines uptime, response times, and penalties from a service provider.\n"
+        "• Change Management: Formal process for requesting, evaluating, testing, and approving infrastructure modifications."
+    ),
+    "Ch 14: Architecture": (
+        "NETWORK TOPOLOGIES, ARCHITECTURES & ZERO TRUST\n"
+        "----------------------------------------------------------------------\n"
+        "PHYSICAL & LOGICAL TOPOLOGIES:\n"
+        "• Star Topology: End devices connect to a central switch. Single point of failure at the switch, but easy to scale.\n"
+        "• Full Mesh vs. Partial Mesh: Full mesh connects every node directly ($n(n-1)/2$ links). Highly redundant, high cost.\n"
+        "• Spine-and-Leaf Architecture: Modern data center fabric replacing 3-tier core/distribution/access. Every Leaf switch connects to every Spine switch, providing predictable low-latency East-West traffic.\n\n"
+        "SOFTWARE-DEFINED NETWORKING (SDN):\n"
+        "• Decouples the Control Plane (routing intelligence/decisions) from the Data/Forwarding Plane (physical packet switching).\n"
+        "• Northbound APIs: Connects the centralized SDN controller to applications/orchestration software.\n"
+        "• Southbound APIs (e.g., OpenFlow): Connects the SDN controller to physical network switches.\n\n"
+        "ZERO TRUST ARCHITECTURE:\n"
+        "• Core Philosophy: 'Never trust, always verify.' Assumes breaches will occur.\n"
+        "• Microsegmentation: Isolates workloads and servers into granular secure zones to prevent lateral movement of attackers."
     )
 }
 
@@ -267,15 +333,19 @@ CHAPTER_CONTENT = {
 GLOSSARY_TERMS = {
     "AAA (Authentication, Authorization, Accounting)": "Framework for controlling access to network resources, verifying identity, and tracking user activities (e.g., RADIUS, TACACS+).",
     "ACL (Access Control List)": "Sequential set of permit/deny rules applied to IP addresses, ports, or protocols on routers and firewalls.",
+    "Administrative Distance (AD)": "A value between 0-255 defining the trustworthiness of a routing source. Lower values are preferred (e.g., Connected=0, Static=1, OSPF=110).",
     "APIPA (Automatic Private IP Addressing)": "Automatic link-local IPv4 address assignment in the 169.254.0.0/16 range when a DHCP server is unreachable.",
     "ARP (Address Resolution Protocol)": "Resolves a known Layer 3 IPv4 address to an unknown Layer 2 physical MAC address on a local segment.",
     "BGP (Border Gateway Protocol)": "The standard exterior gateway routing protocol (EGP) used to route traffic between Autonomous Systems (AS) across the Internet.",
     "CIDR (Classless Inter-Domain Routing)": "Method of IP address allocation and routing that uses prefix masks (e.g., /24) to replace legacy Class A/B/C addressing.",
     "CSMA/CD & CSMA/CA": "Media access mechanisms. CSMA/CD (Collision Detection) is used in legacy half-duplex Ethernet; CSMA/CA (Collision Avoidance) is used in Wi-Fi (802.11).",
+    "DAI (Dynamic ARP Inspection)": "Switch security feature that validates ARP packets against the DHCP snooping binding database to block ARP poisoning.",
     "DHCP (Dynamic Host Configuration Protocol)": "Automated protocol that assigns IP addresses, subnet masks, gateways, and DNS parameters using the DORA sequence.",
+    "DHCP Snooping": "Switch security mechanism filtering unauthorized (rogue) DHCP server responses on untrusted switch ports.",
     "DKIM / SPF / DMARC": "DNS TXT records configured to validate email sender authenticity and prevent phishing, spoofing, and spam.",
     "DMZ (Demilitarized Zone)": "A physical or logical subnetwork that exposes an organization's external-facing services to an untrusted network while protecting the LAN.",
     "DNS (Domain Name System)": "Distributed naming system resolving human-readable hostnames (e.g., example.com) to machine-routable IP addresses.",
+    "DSCP (Differentiated Services Code Point)": "A 6-bit field in the IPv4/IPv6 packet header used to classify and prioritize Layer 3 traffic for Quality of Service (QoS).",
     "FHRP (First Hop Redundancy Protocol)": "Protocols like HSRP, VRRP, and GLBP that provide default gateway redundancy using a shared virtual IP address.",
     "ICMP (Internet Control Message Protocol)": "Network layer protocol used for network diagnostics, error reporting, and utilities like ping and traceroute.",
     "IPsec (Internet Protocol Security)": "Suite of protocols (AH, ESP, IKE) providing authentication, integrity, and encryption for Layer 3 network traffic and VPNs.",
@@ -283,23 +353,28 @@ GLOSSARY_TERMS = {
     "LACP (Link Aggregation Control Protocol)": "IEEE 802.3ad/802.1ax standard that bundles multiple physical network links into a single logical channel for redundancy and throughput.",
     "MAC (Media Access Control) Address": "Unique 48-bit (6-byte) physical identifier burned into a NIC, represented as hexadecimal (e.g., 00:1A:2B:3C:4D:5E).",
     "MIMO (Multiple Input Multiple Output)": "Wireless technology using multiple antennas at transmitter and receiver to improve communication performance and data throughput.",
+    "MPLS (Multiprotocol Label Switching)": "High-performance telecom routing technique that directs data from one node to the next based on short path labels rather than long IP lookups.",
     "MTU (Maximum Transmission Unit)": "The largest size packet or frame (in bytes) that can be transmitted over a physical network interface without fragmentation (default 1500 bytes for Ethernet).",
     "NAC (Network Access Control)": "Security solution enforcing endpoint compliance and security posture checks prior to granting network access via 802.1X.",
     "NAT (Network Address Translation)": "Translates private (RFC 1918) IP addresses to a public routable IP address for internet access (PAT / NAT Overload).",
     "OSPF (Open Shortest Path First)": "A standard interior gateway link-state routing protocol utilizing Dijkstra's algorithm to calculate the shortest path through a network area.",
     "PDU (Protocol Data Unit)": "Unit of data specified in a given layer of the OSI model: Bits (L1), Frames (L2), Packets (L3), Segments/Datagrams (L4), Data (L5-7).",
     "PoE (Power over Ethernet)": "Standards (802.3af 15.4W, 802.3at PoE+ 30W, 802.3bt 60W-90W) that pass electrical power alongside data on twisted-pair Ethernet cables.",
+    "Port Security": "Layer 2 switch feature that restricts port access to specific learned or configured MAC addresses to block unauthorized devices.",
     "QoS (Quality of Service)": "Techniques prioritizing latency-sensitive network traffic (VoIP, video) using tagging mechanisms like DiffServ, CoS, and DSCP.",
     "RADIUS / TACACS+": "Centralized AAA protocols. RADIUS combines authentication/authorization using UDP; TACACS+ separates AAA and encrypts the full payload over TCP port 49.",
     "RSTP (Rapid Spanning Tree Protocol)": "IEEE 802.1w protocol that prevents Layer 2 switching loops while converging topology changes significantly faster than legacy 802.1D STP.",
+    "SD-WAN (Software-Defined Wide Area Network)": "An overlay architecture that dynamically and intelligently routes traffic across multiple WAN transport connections based on performance.",
     "SDN (Software-Defined Networking)": "Architecture decoupling the network control plane (decision-making) from the data plane (underlying packet forwarding).",
     "SFP / SFP+ / QSFP+": "Hot-swappable transceiver form factors supporting Gigabit (SFP), 10 Gigabit (SFP+), and 40 Gigabit (QSFP+) optical or direct-attach copper links.",
     "SNMP (Simple Network Management Protocol)": "Application-layer protocol for monitoring and configuring network devices via MIB queries (UDP 161) and event Traps (UDP 162).",
+    "Spine-and-Leaf": "Two-tier data center switching architecture where every leaf switch connects to every spine switch, optimizing east-west traffic.",
     "Syslog": "Standard protocol logging event notifications from network infrastructure to a central server over UDP port 514.",
     "VLAN (Virtual Local Area Network)": "Logical partition of a physical Layer 2 switch into multiple distinct broadcast domains (standardized by IEEE 802.1Q tagging).",
     "VPN (Virtual Private Network)": "Encrypted tunnel extending a private network across a public network to secure communications.",
     "VRRP (Virtual Router Redundancy Protocol)": "Open-standard FHRP providing automatic assignment of available IP routers to participating hosts.",
-    "WPA3 (Wi-Fi Protected Access 3)": "Current wireless security standard mandating Protected Management Frames and replacing PSK with SAE to prevent dictionary attacks."
+    "WPA3 (Wi-Fi Protected Access 3)": "Current wireless security standard mandating Protected Management Frames and replacing PSK with SAE to prevent dictionary attacks.",
+    "Zero Trust": "Security paradigm requiring strict verification for every user and device attempting to access network resources, regardless of location."
 }
 
 # --- Quick Drill Flashcard Decks ---
@@ -384,62 +459,99 @@ QUIZ_DATA = {
         ("What metric describes the average operational time a device functions before experiencing hardware failure?", "MTBF (Mean Time Between Failures)"),
         ("What protocol collects traffic metadata and flow statistics across switch interfaces?", "NetFlow / sFlow / IPFIX"),
         ("What Syslog severity level corresponds to an 'Emergency' condition?", "Level 0 (Emergency)")
+    ],
+    "Ch 11: Routing & WAN": [
+        ("What is the Administrative Distance of OSPF by default?", "110 (Static is 1, eBGP is 20, EIGRP is 90)"),
+        ("What protocol connects Autonomous Systems (AS) across the global Internet?", "BGP (Border Gateway Protocol)"),
+        ("What WAN technology forwards packets using short labels instead of complex Layer 3 lookups?", "MPLS (Multiprotocol Label Switching)"),
+        ("What is the metric limit for Routing Information Protocol (RIP)?", "15 hops (16 is considered unreachable)"),
+        ("What WAN architecture dynamically steers traffic across broadband, cellular, and MPLS?", "SD-WAN (Software-Defined WAN)")
+    ],
+    "Ch 12: Optimization": [
+        ("What field in an IPv4 header is used by DiffServ to provide Layer 3 QoS markings?", "DSCP (Differentiated Services Code Point - 6 bits)"),
+        ("What open-standard protocol provides default gateway redundancy across routers?", "VRRP (Virtual Router Redundancy Protocol)"),
+        ("What protocol standardizes link aggregation to combine multiple physical links into one?", "LACP (IEEE 802.3ad/802.1ax)"),
+        ("What is the difference between traffic shaping and traffic policing?", "Shaping buffers and delays excess traffic; policing drops excess traffic immediately."),
+        ("What load balancing algorithm directs traffic to the server with the fewest active sessions?", "Least Connections")
+    ],
+    "Ch 13: Hardening": [
+        ("What switch security feature prevents rogue DHCP servers by designating trusted ports?", "DHCP Snooping"),
+        ("What Layer 2 security mechanism inspects and validates ARP packets against the DHCP snooping table?", "Dynamic ARP Inspection (DAI)"),
+        ("What port security violation mode drops offending packets and shuts down the port entirely?", "Shutdown (places port in err-disable state)"),
+        ("What type of data center fire suppression uses clean chemical gas without damaging electronics?", "Clean-Agent Gas Suppression (e.g., FM-200/Inergen)"),
+        ("What agreement defines required uptime, support response times, and failure penalties with a vendor?", "SLA (Service Level Agreement)")
+    ],
+    "Ch 14: Architecture": [
+        ("What modern two-tier data center topology optimizes predictable east-west traffic?", "Spine-and-Leaf Architecture"),
+        ("In SDN architecture, what API connects the SDN controller to physical network switches?", "Southbound API (e.g., OpenFlow)"),
+        ("What security paradigm operates on the core principle of 'Never trust, always verify'?", "Zero Trust Architecture"),
+        ("What formula calculates the total number of links required in a full mesh network of n nodes?", "n(n - 1) / 2"),
+        ("What technique divides data center workloads into granular isolated zones to prevent lateral movement?", "Microsegmentation")
     ]
 }
 
-# --- 50-Question Practice Exam Bank ---
+# --- Comprehensive Practice Exam Bank (Categorized) ---
 PRACTICE_TEST_BANK = [
-    {"q": "According to the binary leading-bit rule for classful addressing, what binary value must the first octet of a Class B IP address start with?", "options": ["0", "10", "110", "1110"], "answer": "10", "exp": "Class B addresses always begin with the leading binary bits '10', which establishes the 128 to 191 decimal boundary (10000000 to 10111111)."},
-    {"q": "A network engineer needs to configure an Access Control List (ACL) to block unencrypted web browsing traffic. Which port should be filtered?", "options": ["Port 443", "Port 80", "Port 22", "Port 53"], "answer": "Port 80", "exp": "Port 80 is used by HTTP for cleartext web traffic. Port 443 is HTTPS (encrypted)."},
-    {"q": "At which layer of the OSI model does a standard Layer 2 Ethernet switch make its forwarding decisions?", "options": ["Layer 1 (Physical)", "Layer 2 (Data Link)", "Layer 3 (Network)", "Layer 4 (Transport)"], "answer": "Layer 2 (Data Link)", "exp": "Layer 2 switches evaluate Destination MAC addresses inside Ethernet frame headers to make forwarding decisions."},
-    {"q": "A user reports they cannot connect to any network resources. According to the CompTIA troubleshooting methodology, what should the technician do FIRST?", "options": ["Establish a theory of probable cause", "Identify the problem", "Test the theory to determine cause", "Establish a plan of action"], "answer": "Identify the problem", "exp": "Step 1 is always Identify the Problem by questioning the user, identifying symptoms, and checking for recent changes."},
-    {"q": "Which DNS resource record is responsible for directing incoming domain email to the authoritative mail server?", "options": ["A Record", "CNAME Record", "MX Record", "PTR Record"], "answer": "MX Record", "exp": "MX (Mail Exchanger) records route email to designated mail servers with configurable priority metrics."},
-    {"q": "How many usable host IP addresses are available in a network configured with a /28 subnet mask?", "options": ["14", "16", "30", "32"], "answer": "14", "exp": "A /28 mask leaves 4 host bits (32 - 28 = 4). 2^4 - 2 = 16 - 2 = 14 usable host addresses."},
-    {"q": "Which fiber optic cabling type uses narrow core diameters and lasers for multi-kilometer backbone transmissions?", "options": ["Multi-Mode Fiber (MMF)", "Single-Mode Fiber (SMF)", "Cat 6a STP", "Coaxial RG-6"], "answer": "Single-Mode Fiber (SMF)", "exp": "SMF has an 8-10 micron core and uses laser optics to transmit over long distances with minimal modal dispersion."},
-    {"q": "Which port and protocol does Microsoft Remote Desktop Protocol (RDP) utilize by default?", "options": ["Port 22 TCP", "Port 3389 TCP", "Port 445 TCP", "Port 5060 UDP"], "answer": "Port 3389 TCP", "exp": "RDP uses TCP (and optionally UDP) port 3389 for remote desktop management sessions."},
-    {"q": "What is the third message exchanged in the standard DHCP address leasing process?", "options": ["Discover", "Offer", "Request", "Acknowledge"], "answer": "Request", "exp": "The DHCP D.O.R.A. sequence is: 1. Discover, 2. Offer, 3. Request, 4. Acknowledge."},
-    {"q": "Which Protocol Data Unit (PDU) is encapsulated and processed at Layer 3 of the OSI model?", "options": ["Bit", "Frame", "Packet", "Segment"], "answer": "Packet", "exp": "PDUs: Layer 1 = Bits, Layer 2 = Frames, Layer 3 = Packets, Layer 4 = Segments (TCP) / Datagrams (UDP)."},
-    {"q": "What is the maximum certified cable length for 10GBASE-T Ethernet transmission over Category 6 UTP cabling?", "options": ["100 meters", "55 meters", "30 meters", "10 meters"], "answer": "55 meters", "exp": "Cat 6 supports 10 Gbps up to 55 meters. Cat 6a is required for 10 Gbps up to the full 100-meter standard."},
-    {"q": "Which layer of the OSI model manages dialogue control, session synchronization, and token management between applications?", "options": ["Layer 4 (Transport)", "Layer 5 (Session)", "Layer 6 (Presentation)", "Layer 7 (Application)"], "answer": "Layer 5 (Session)", "exp": "The Session layer establishes, maintains, and terminates communication sessions between software processes."},
-    {"q": "Which protocol and port does DNS utilize for standard client-to-server hostname resolution queries?", "options": ["Port 53 UDP", "Port 53 TCP", "Port 67 UDP", "Port 123 UDP"], "answer": "Port 53 UDP", "exp": "DNS uses UDP port 53 for standard name resolution queries and TCP port 53 for large zone transfers."},
-    {"q": "What network hardware device forwards packets between distinct IP subnets based on Layer 3 routing tables?", "options": ["Layer 2 Switch", "Hub", "Router", "Bridge"], "answer": "Router", "exp": "Routers operate at Layer 3 to route packets across logical network boundaries and isolate broadcast domains."},
-    {"q": "What is the decimal dotted-quad subnet mask for a network prefix of /26?", "options": ["255.255.255.0", "255.255.255.128", "255.255.255.192", "255.255.255.224"], "answer": "255.255.255.192", "exp": "A /26 has 26 network bits: 11111111.11111111.11111111.11000000 = 255.255.255.192."},
-    {"q": "A client laptop fails to reach a DHCP server and self-assigns the IP address 169.254.42.10. What mechanism assigned this address?", "options": ["DNS", "APIPA", "Static ARP", "NAT"], "answer": "APIPA", "exp": "APIPA automatically assigns an address in the 169.254.0.0/16 range when DHCP discovery fails."},
-    {"q": "After confirming a theory of probable cause during troubleshooting, what is the immediate NEXT step in the CompTIA methodology?", "options": ["Document findings", "Verify full system functionality", "Establish a plan of action and identify potential effects", "Implement the solution"], "answer": "Establish a plan of action and identify potential effects", "exp": "Step 4 is establishing a plan of action and considering collateral impacts before making any production changes."},
-    {"q": "Which cable standard is mandatory when routing Ethernet cabling through building plenum air-handling spaces?", "options": ["PVC / CM", "Plenum / CMP", "LSZH", "Direct Burial"], "answer": "Plenum / CMP", "exp": "CMP (Plenum-rated) cabling uses low-smoke, fire-retardant materials to prevent toxic fumes in HVAC ducts."},
-    {"q": "Which port provides secure, encrypted interactive command-line access to replace legacy Telnet?", "options": ["Port 21", "Port 22", "Port 23", "Port 25"], "answer": "Port 22", "exp": "SSH (Secure Shell) operates on TCP port 22, encrypting terminal sessions to replace unencrypted Telnet (port 23)."},
-    {"q": "Which DNS record type acts as an alias, pointing one hostname to another canonical hostname?", "options": ["A Record", "AAAA Record", "CNAME Record", "PTR Record"], "answer": "CNAME Record", "exp": "A CNAME (Canonical Name) record aliases an alternative name to an existing canonical domain name."},
-    {"q": "Which wireless standard operates exclusively in the 5 GHz radio spectrum?", "options": ["802.11b", "802.11g", "802.11n", "802.11ac"], "answer": "802.11ac", "exp": "802.11ac (Wi-Fi 5) operates exclusively on the 5 GHz band. 802.11n and 802.11ax operate on both bands."},
-    {"q": "What type of hypervisor installs directly on bare physical server hardware without a host OS?", "options": ["Type 1 (Bare-Metal)", "Type 2 (Hosted)", "Container Engine", "Virtual Appliance"], "answer": "Type 1 (Bare-Metal)", "exp": "Type 1 hypervisors (e.g., VMware ESXi, Hyper-V) run directly on server hardware for maximum performance."},
-    {"q": "A company subscribes to Microsoft 365 for cloud email and office productivity. What cloud model is this?", "options": ["IaaS", "PaaS", "SaaS", "DaaS"], "answer": "SaaS", "exp": "Software as a Service (SaaS) delivers fully managed vendor-hosted applications accessible via browser/client."},
-    {"q": "Which attack intercepts and alters communication between two network hosts by poisoning ARP caches?", "options": ["DDoS", "On-Path (Man-in-the-Middle)", "Phishing", "Ransomware"], "answer": "On-Path (Man-in-the-Middle)", "exp": "On-path attacks intercept, monitor, or alter transit traffic between endpoints (e.g., via ARP poisoning)."},
-    {"q": "Which protocol monitors device telemetry and query metrics on routers and switches using UDP port 161?", "options": ["SNMP", "SMTP", "SMB", "SIP"], "answer": "SNMP", "exp": "SNMP (Simple Network Management Protocol) polls device health and metrics over UDP port 161."},
-    {"q": "What metric represents the average time required to repair and restore a failed system component?", "options": ["MTBF", "MTTR", "RTO", "RPO"], "answer": "MTTR", "exp": "Mean Time To Repair (MTTR) measures the average elapsed time to resolve a failure and restore functionality."},
-    {"q": "Which Wi-Fi security protocol introduced Simultaneous Authentication of Equals (SAE) to block dictionary attacks?", "options": ["WEP", "WPA", "WPA2", "WPA3"], "answer": "WPA3", "exp": "WPA3 replaces Pre-Shared Key exchange with SAE to eliminate vulnerability to offline dictionary attacks."},
-    {"q": "A backup job archives all files modified since the last FULL backup without clearing the archive bit. What backup type is this?", "options": ["Full", "Incremental", "Differential", "Snapshot"], "answer": "Differential", "exp": "Differential backups copy all files changed since the last full backup and leave archive bits intact."},
-    {"q": "Which layer of the OSI model handles data formatting, character encoding, and TLS/SSL encryption?", "options": ["Layer 7", "Layer 6", "Layer 5", "Layer 4"], "answer": "Layer 6", "exp": "Layer 6 (Presentation) formats, compresses, and encrypts/decrypts data payloads for application delivery."},
-    {"q": "A network administrator needs to transfer files securely over an encrypted SSH channel. Which protocol should be used?", "options": ["FTP", "TFTP", "SFTP", "FTPS"], "answer": "SFTP", "exp": "SFTP (SSH File Transfer Protocol) runs inside an encrypted SSH tunnel over TCP port 22."},
-    {"q": "Which physical device can be deployed to filter incoming network traffic based on IP addresses and port numbers?", "options": ["Layer 2 Switch", "Hub", "Firewall", "Access Point"], "answer": "Firewall", "exp": "Firewalls evaluate Access Control Lists (ACLs) and state tables to filter traffic by IP, port, and protocol."},
-    {"q": "What centralized protocol collects event notifications and system logs from routers and switches over UDP port 514?", "options": ["Syslog", "SNMP", "RADIUS", "NTP"], "answer": "Syslog", "exp": "Syslog standardizes system event logging, aggregating messages to centralized collectors on UDP 514."},
-    {"q": "What is the primary operational objective of establishing a formal network performance baseline?", "options": ["Upgrade firmware", "Compare normal traffic patterns against anomalies", "Block MAC addresses", "Configure IPsec tunnels"], "answer": "Compare normal traffic patterns against anomalies", "exp": "Baselines document normal operational metrics, allowing engineers to spot anomalies and plan capacity."},
-    {"q": "Which wireless frequency band provides superior range and wall penetration at the cost of lower throughput?", "options": ["5 GHz", "2.4 GHz", "6 GHz", "60 GHz"], "answer": "2.4 GHz", "exp": "Lower frequency radio waves (2.4 GHz) travel farther and penetrate walls better than higher frequency 5 GHz waves."},
-    {"q": "A network engineer needs to subnet 192.168.10.0/24 to support exactly 30 usable hosts per subnet. What CIDR notation is required?", "options": ["/26", "/27", "/28", "/29"], "answer": "/27", "exp": "A /27 mask leaves 5 host bits: 2^5 - 2 = 32 - 2 = 30 usable host addresses per subnet."},
-    {"q": "Which email protocol downloads messages to a local client and typically deletes them from the central mail server?", "options": ["POP3", "IMAP", "SMTP", "SNMP"], "answer": "POP3", "exp": "POP3 (port 110) downloads email locally and deletes server copies, unlike IMAP (port 143) which syncs."},
-    {"q": "Which attack floods a target with spoofed traffic from thousands of compromised distributed botnet devices?", "options": ["Phishing", "DDoS", "Ransomware", "SQL Injection"], "answer": "DDoS", "exp": "Distributed Denial of Service (DDoS) leverages distributed botnets to overwhelm bandwidth or compute capacity."},
-    {"q": "Immediately after implementing a solution to fix a network fault, what is the next step in the CompTIA methodology?", "options": ["Document findings", "Verify full system functionality and implement preventive measures", "Test the theory", "Identify the problem"], "answer": "Verify full system functionality and implement preventive measures", "exp": "Step 6 requires verifying that the system is fully functional with the user and applying preventive controls."},
-    {"q": "What spanning-tree protocol standard (IEEE 802.1w) provides fast convergence to prevent Layer 2 switching loops?", "options": ["STP (802.1D)", "RSTP (802.1w)", "LACP (802.3ad)", "VLAN (802.1Q)"], "answer": "RSTP (802.1w)", "exp": "Rapid Spanning Tree Protocol (RSTP / 802.1w) provides sub-second convergence to eliminate switching loops."},
-    {"q": "Which IPv6 address represents the equivalent of the IPv4 loopback address 127.0.0.1?", "options": ["::1", "fe80::1", "2001::1", "ff02::1"], "answer": "::1", "exp": "The IPv6 loopback address is written as ::1 (0000:0000:0000:0000:0000:0000:0000:0001)."},
-    {"q": "What technology allows network administrators to logically segment a single physical switch into isolated broadcast domains?", "options": ["NAT", "VLAN", "VPN", "DMZ"], "answer": "VLAN", "exp": "Virtual LANs (VLANs - 802.1Q) partition physical switches into independent logical broadcast domains."},
-    {"q": "Which authentication protocol encrypts the entire AAA packet payload and operates over TCP port 49?", "options": ["RADIUS", "TACACS+", "LDAP", "Kerberos"], "answer": "TACACS+", "exp": "TACACS+ encrypts the entire communication payload over TCP port 49; RADIUS only encrypts the password field over UDP."},
-    {"q": "What is the standard Ethernet Maximum Transmission Unit (MTU) size before jumbo framing is enabled?", "options": ["512 bytes", "1500 bytes", "4096 bytes", "9000 bytes"], "answer": "1500 bytes", "exp": "Standard Ethernet interfaces utilize a 1,500-byte MTU payload size. Jumbo frames support up to 9,000 bytes."},
-    {"q": "Which protocol dynamically bundles multiple physical network links into a single logical channel for redundancy?", "options": ["LACP (802.3ad)", "STP (802.1D)", "LLDP", "CDP"], "answer": "LACP (802.3ad)", "exp": "Link Aggregation Control Protocol (LACP) bundles physical links into a single logical channel (EtherChannel/LAG)."},
-    {"q": "Which port does Network Time Protocol (NTP) utilize for system clock synchronization?", "options": ["Port 69 UDP", "Port 123 UDP", "Port 161 UDP", "Port 389 TCP"], "answer": "Port 123 UDP", "exp": "NTP synchronizes clocks across network infrastructure over UDP port 123."},
-    {"q": "What type of storage architecture delivers block-level storage over dedicated high-speed Fibre Channel or iSCSI networks?", "options": ["NAS", "SAN", "DAS", "Cloud Object Storage"], "answer": "SAN", "exp": "Storage Area Networks (SANs) provide raw block-level storage volumes over dedicated iSCSI or Fibre Channel links."},
-    {"q": "Which cloud service model provides a pre-configured execution runtime where developers upload code without managing underlying servers?", "options": ["IaaS", "PaaS", "SaaS", "SECaaS"], "answer": "PaaS", "exp": "Platform as a Service (PaaS) provides managed hardware, OS, and runtimes so developers focus solely on code."},
-    {"q": "What network security technology evaluates endpoint posture (antivirus, patches) before granting access via 802.1X?", "options": ["NAC", "NAT", "NTP", "NDP"], "answer": "NAC", "exp": "Network Access Control (NAC) assesses endpoint health and authentication before admission to the network."},
-    {"q": "What is the primary exterior routing protocol utilized to exchange routing prefixes between Autonomous Systems across the Internet?", "options": ["OSPF", "EIGRP", "BGP", "RIP"], "answer": "BGP", "exp": "Border Gateway Protocol (BGP) is the path-vector Exterior Gateway Protocol (EGP) underpinning the global Internet."},
-    {"q": "Which First Hop Redundancy Protocol (FHRP) is an open standard allowing multiple routers to share a single virtual IP gateway?", "options": ["HSRP", "VRRP", "GLBP", "CARP"], "answer": "VRRP", "exp": "Virtual Router Redundancy Protocol (VRRP) is the open IETF standard for default gateway redundancy."},
-    {"q": "What protocol translates private internal RFC 1918 IPv4 addresses into a single public routable IP using unique source ports?", "options": ["Static NAT", "PAT (NAT Overload)", "RIP", "ARP"], "answer": "PAT (NAT Overload)", "exp": "Port Address Translation (PAT / NAT Overload) maps multiple private IPs to one public IP using source port tracking."}
+    # --- PART 1: CHAPTERS 1-6 (Foundations) ---
+    {"cat": "1-6", "q": "According to the binary leading-bit rule for classful addressing, what binary value must the first octet of a Class B IP address start with?", "options": ["0", "10", "110", "1110"], "answer": "10", "exp": "Class B addresses always begin with the leading binary bits '10', establishing the 128 to 191 decimal boundary."},
+    {"cat": "1-6", "q": "A network engineer needs to configure an Access Control List (ACL) to block unencrypted web browsing traffic. Which port should be filtered?", "options": ["Port 443", "Port 80", "Port 22", "Port 53"], "answer": "Port 80", "exp": "Port 80 is used by HTTP for cleartext web traffic. Port 443 is HTTPS (encrypted)."},
+    {"cat": "1-6", "q": "At which layer of the OSI model does a standard Layer 2 Ethernet switch make its forwarding decisions?", "options": ["Layer 1 (Physical)", "Layer 2 (Data Link)", "Layer 3 (Network)", "Layer 4 (Transport)"], "answer": "Layer 2 (Data Link)", "exp": "Layer 2 switches evaluate Destination MAC addresses inside Ethernet frame headers to make forwarding decisions."},
+    {"cat": "1-6", "q": "A user reports they cannot connect to any network resources. According to the CompTIA troubleshooting methodology, what should the technician do FIRST?", "options": ["Establish a theory of probable cause", "Identify the problem", "Test the theory to determine cause", "Establish a plan of action"], "answer": "Identify the problem", "exp": "Step 1 is always Identify the Problem by questioning the user, identifying symptoms, and checking for recent changes."},
+    {"cat": "1-6", "q": "Which DNS resource record is responsible for directing incoming domain email to the authoritative mail server?", "options": ["A Record", "CNAME Record", "MX Record", "PTR Record"], "answer": "MX Record", "exp": "MX (Mail Exchanger) records route email to designated mail servers with configurable priority metrics."},
+    {"cat": "1-6", "q": "How many usable host IP addresses are available in a network configured with a /28 subnet mask?", "options": ["14", "16", "30", "32"], "answer": "14", "exp": "A /28 mask leaves 4 host bits (32 - 28 = 4). 2^4 - 2 = 16 - 2 = 14 usable host addresses."},
+    {"cat": "1-6", "q": "Which fiber optic cabling type uses narrow core diameters and lasers for multi-kilometer backbone transmissions?", "options": ["Multi-Mode Fiber (MMF)", "Single-Mode Fiber (SMF)", "Cat 6a STP", "Coaxial RG-6"], "answer": "Single-Mode Fiber (SMF)", "exp": "SMF has an 8-10 micron core and uses laser optics to transmit over long distances with minimal modal dispersion."},
+    {"cat": "1-6", "q": "Which port and protocol does Microsoft Remote Desktop Protocol (RDP) utilize by default?", "options": ["Port 22 TCP", "Port 3389 TCP", "Port 445 TCP", "Port 5060 UDP"], "answer": "Port 3389 TCP", "exp": "RDP uses TCP (and optionally UDP) port 3389 for remote desktop management sessions."},
+    {"cat": "1-6", "q": "What is the third message exchanged in the standard DHCP address leasing process?", "options": ["Discover", "Offer", "Request", "Acknowledge"], "answer": "Request", "exp": "The DHCP D.O.R.A. sequence is: 1. Discover, 2. Offer, 3. Request, 4. Acknowledge."},
+    {"cat": "1-6", "q": "Which Protocol Data Unit (PDU) is encapsulated and processed at Layer 3 of the OSI model?", "options": ["Bit", "Frame", "Packet", "Segment"], "answer": "Packet", "exp": "PDUs: Layer 1 = Bits, Layer 2 = Frames, Layer 3 = Packets, Layer 4 = Segments (TCP) / Datagrams (UDP)."},
+    {"cat": "1-6", "q": "What is the maximum certified cable length for 10GBASE-T Ethernet transmission over Category 6 UTP cabling?", "options": ["100 meters", "55 meters", "30 meters", "10 meters"], "answer": "55 meters", "exp": "Cat 6 supports 10 Gbps up to 55 meters. Cat 6a is required for 10 Gbps up to the full 100-meter standard."},
+    {"cat": "1-6", "q": "Which layer of the OSI model manages dialogue control, session synchronization, and token management between applications?", "options": ["Layer 4 (Transport)", "Layer 5 (Session)", "Layer 6 (Presentation)", "Layer 7 (Application)"], "answer": "Layer 5 (Session)", "exp": "The Session layer establishes, maintains, and terminates communication sessions between software processes."},
+    {"cat": "1-6", "q": "Which protocol and port does DNS utilize for standard client-to-server hostname resolution queries?", "options": ["Port 53 UDP", "Port 53 TCP", "Port 67 UDP", "Port 123 UDP"], "answer": "Port 53 UDP", "exp": "DNS uses UDP port 53 for standard name resolution queries and TCP port 53 for large zone transfers."},
+    {"cat": "1-6", "q": "What network hardware device forwards packets between distinct IP subnets based on Layer 3 routing tables?", "options": ["Layer 2 Switch", "Hub", "Router", "Bridge"], "answer": "Router", "exp": "Routers operate at Layer 3 to route packets across logical network boundaries and isolate broadcast domains."},
+    {"cat": "1-6", "q": "What is the decimal dotted-quad subnet mask for a network prefix of /26?", "options": ["255.255.255.0", "255.255.255.128", "255.255.255.192", "255.255.255.224"], "answer": "255.255.255.192", "exp": "A /26 has 26 network bits: 11111111.11111111.11111111.11000000 = 255.255.255.192."},
+    {"cat": "1-6", "q": "A client laptop fails to reach a DHCP server and self-assigns the IP address 169.254.42.10. What mechanism assigned this address?", "options": ["DNS", "APIPA", "Static ARP", "NAT"], "answer": "APIPA", "exp": "APIPA automatically assigns an address in the 169.254.0.0/16 range when DHCP discovery fails."},
+    {"cat": "1-6", "q": "After confirming a theory of probable cause during troubleshooting, what is the immediate NEXT step in the CompTIA methodology?", "options": ["Document findings", "Verify full system functionality", "Establish a plan of action and identify potential effects", "Implement the solution"], "answer": "Establish a plan of action and identify potential effects", "exp": "Step 4 is establishing a plan of action and considering collateral impacts before making any production changes."},
+    {"cat": "1-6", "q": "Which cable standard is mandatory when routing Ethernet cabling through building plenum air-handling spaces?", "options": ["PVC / CM", "Plenum / CMP", "LSZH", "Direct Burial"], "answer": "Plenum / CMP", "exp": "CMP (Plenum-rated) cabling uses low-smoke, fire-retardant materials to prevent toxic fumes in HVAC ducts."},
+    {"cat": "1-6", "q": "Which port provides secure, encrypted interactive command-line access to replace legacy Telnet?", "options": ["Port 21", "Port 22", "Port 23", "Port 25"], "answer": "Port 22", "exp": "SSH (Secure Shell) operates on TCP port 22, encrypting terminal sessions to replace unencrypted Telnet (port 23)."},
+    {"cat": "1-6", "q": "Which DNS record type acts as an alias, pointing one hostname to another canonical hostname?", "options": ["A Record", "AAAA Record", "CNAME Record", "PTR Record"], "answer": "CNAME Record", "exp": "A CNAME (Canonical Name) record aliases an alternative name to an existing canonical domain name."},
+
+    # --- PART 2: CHAPTERS 7-10 (Wireless, Cloud & Security) ---
+    {"cat": "7-10", "q": "Which wireless standard operates exclusively in the 5 GHz radio spectrum?", "options": ["802.11b", "802.11g", "802.11n", "802.11ac"], "answer": "802.11ac", "exp": "802.11ac (Wi-Fi 5) operates exclusively on the 5 GHz band. 802.11n and 802.11ax operate on both bands."},
+    {"cat": "7-10", "q": "What type of hypervisor installs directly on bare physical server hardware without a host OS?", "options": ["Type 1 (Bare-Metal)", "Type 2 (Hosted)", "Container Engine", "Virtual Appliance"], "answer": "Type 1 (Bare-Metal)", "exp": "Type 1 hypervisors (e.g., VMware ESXi, Hyper-V) run directly on server hardware for maximum performance."},
+    {"cat": "7-10", "q": "A company subscribes to Microsoft 365 for cloud email and office productivity. What cloud model is this?", "options": ["IaaS", "PaaS", "SaaS", "DaaS"], "answer": "SaaS", "exp": "Software as a Service (SaaS) delivers fully managed vendor-hosted applications accessible via browser/client."},
+    {"cat": "7-10", "q": "Which attack intercepts and alters communication between two network hosts by poisoning ARP caches?", "options": ["DDoS", "On-Path (Man-in-the-Middle)", "Phishing", "Ransomware"], "answer": "On-Path (Man-in-the-Middle)", "exp": "On-path attacks intercept, monitor, or alter transit traffic between endpoints (e.g., via ARP poisoning)."},
+    {"cat": "7-10", "q": "Which protocol monitors device telemetry and query metrics on routers and switches using UDP port 161?", "options": ["SNMP", "SMTP", "SMB", "SIP"], "answer": "SNMP", "exp": "SNMP (Simple Network Management Protocol) polls device health and metrics over UDP port 161."},
+    {"cat": "7-10", "q": "What metric represents the average time required to repair and restore a failed system component?", "options": ["MTBF", "MTTR", "RTO", "RPO"], "answer": "MTTR", "exp": "Mean Time To Repair (MTTR) measures the average elapsed time to resolve a failure and restore functionality."},
+    {"cat": "7-10", "q": "Which Wi-Fi security protocol introduced Simultaneous Authentication of Equals (SAE) to block dictionary attacks?", "options": ["WEP", "WPA", "WPA2", "WPA3"], "answer": "WPA3", "exp": "WPA3 replaces Pre-Shared Key exchange with SAE to eliminate vulnerability to offline dictionary attacks."},
+    {"cat": "7-10", "q": "A backup job archives all files modified since the last FULL backup without clearing the archive bit. What backup type is this?", "options": ["Full", "Incremental", "Differential", "Snapshot"], "answer": "Differential", "exp": "Differential backups copy all files changed since the last full backup and leave archive bits intact."},
+    {"cat": "7-10", "q": "Which layer of the OSI model handles data formatting, character encoding, and TLS/SSL encryption?", "options": ["Layer 7", "Layer 6", "Layer 5", "Layer 4"], "answer": "Layer 6", "exp": "Layer 6 (Presentation) formats, compresses, and encrypts/decrypts data payloads for application delivery."},
+    {"cat": "7-10", "q": "A network administrator needs to transfer files securely over an encrypted SSH channel. Which protocol should be used?", "options": ["FTP", "TFTP", "SFTP", "FTPS"], "answer": "SFTP", "exp": "SFTP (SSH File Transfer Protocol) runs inside an encrypted SSH tunnel over TCP port 22."},
+    {"cat": "7-10", "q": "Which physical device can be deployed to filter incoming network traffic based on IP addresses and port numbers?", "options": ["Layer 2 Switch", "Hub", "Firewall", "Access Point"], "answer": "Firewall", "exp": "Firewalls evaluate Access Control Lists (ACLs) and state tables to filter traffic by IP, port, and protocol."},
+    {"cat": "7-10", "q": "What centralized protocol collects event notifications and system logs from routers and switches over UDP port 514?", "options": ["Syslog", "SNMP", "RADIUS", "NTP"], "answer": "Syslog", "exp": "Syslog standardizes system event logging, aggregating messages to centralized collectors on UDP 514."},
+    {"cat": "7-10", "q": "What is the primary operational objective of establishing a formal network performance baseline?", "options": ["Upgrade firmware", "Compare normal traffic patterns against anomalies", "Block MAC addresses", "Configure IPsec tunnels"], "answer": "Compare normal traffic patterns against anomalies", "exp": "Baselines document normal operational metrics, allowing engineers to spot anomalies and plan capacity."},
+    {"cat": "7-10", "q": "Which wireless frequency band provides superior range and wall penetration at the cost of lower throughput?", "options": ["5 GHz", "2.4 GHz", "6 GHz", "60 GHz"], "answer": "2.4 GHz", "exp": "Lower frequency radio waves (2.4 GHz) travel farther and penetrate walls better than higher frequency 5 GHz waves."},
+    {"cat": "7-10", "q": "A network engineer needs to subnet 192.168.10.0/24 to support exactly 30 usable hosts per subnet. What CIDR notation is required?", "options": ["/26", "/27", "/28", "/29"], "answer": "/27", "exp": "A /27 mask leaves 5 host bits: 2^5 - 2 = 32 - 2 = 30 usable host addresses per subnet."},
+    {"cat": "7-10", "q": "Which email protocol downloads messages to a local client and typically deletes them from the central mail server?", "options": ["POP3", "IMAP", "SMTP", "SNMP"], "answer": "POP3", "exp": "POP3 (port 110) downloads email locally and deletes server copies, unlike IMAP (port 143) which syncs."},
+    {"cat": "7-10", "q": "Which attack floods a target with spoofed traffic from thousands of compromised distributed botnet devices?", "options": ["Phishing", "DDoS", "Ransomware", "SQL Injection"], "answer": "DDoS", "exp": "Distributed Denial of Service (DDoS) leverages distributed botnets to overwhelm bandwidth or compute capacity."},
+    {"cat": "7-10", "q": "Immediately after implementing a solution to fix a network fault, what is the next step in the CompTIA methodology?", "options": ["Document findings", "Verify full system functionality and implement preventive measures", "Test the theory", "Identify the problem"], "answer": "Verify full system functionality and implement preventive measures", "exp": "Step 6 requires verifying that the system is fully functional with the user and applying preventive controls."},
+    {"cat": "7-10", "q": "What spanning-tree protocol standard (IEEE 802.1w) provides fast convergence to prevent Layer 2 switching loops?", "options": ["STP (802.1D)", "RSTP (802.1w)", "LACP (802.3ad)", "VLAN (802.1Q)"], "answer": "RSTP (802.1w)", "exp": "Rapid Spanning Tree Protocol (RSTP / 802.1w) provides sub-second convergence to eliminate switching loops."},
+    {"cat": "7-10", "q": "Which IPv6 address represents the equivalent of the IPv4 loopback address 127.0.0.1?", "options": ["::1", "fe80::1", "2001::1", "ff02::1"], "answer": "::1", "exp": "The IPv6 loopback address is written as ::1 (0000:0000:0000:0000:0000:0000:0000:0001)."},
+
+    # --- PART 3: CHAPTERS 11-14 (Routing, Hardening & Architecture) ---
+    {"cat": "11-end", "q": "What is the default Administrative Distance (AD) of the Open Shortest Path First (OSPF) routing protocol?", "options": ["90", "110", "120", "20"], "answer": "110", "exp": "OSPF has an AD of 110. EIGRP is 90, RIP is 120, and eBGP is 20."},
+    {"cat": "11-end", "q": "Which Layer 2 switch security feature mitigates ARP cache poisoning by checking ARP packets against trusted bindings?", "options": ["BPDU Guard", "DHCP Snooping", "Dynamic ARP Inspection (DAI)", "Port Fast"], "answer": "Dynamic ARP Inspection (DAI)", "exp": "DAI intercepts, inspects, and validates ARP packets against the DHCP Snooping database to block invalid mappings."},
+    {"cat": "11-end", "q": "What data center switching topology connects every leaf switch to every spine switch for optimized East-West traffic?", "options": ["Spine-and-Leaf", "Ring Topology", "Star Topology", "Bus Topology"], "answer": "Spine-and-Leaf", "exp": "Spine-and-Leaf provides high-bandwidth, deterministic single-hop latency between all servers across data centers."},
+    {"cat": "11-end", "q": "Which exterior gateway routing protocol utilizes TCP port 179 to connect global Autonomous Systems?", "options": ["OSPF", "IS-IS", "BGP", "EIGRP"], "answer": "BGP", "exp": "Border Gateway Protocol (BGP) forms reliable neighbor adjacencies over TCP port 179."},
+    {"cat": "11-end", "q": "What 6-bit field in the IPv4 packet header is used by DiffServ architecture to provide Layer 3 QoS prioritization?", "options": ["TTL", "DSCP", "CoS", "Total Length"], "answer": "DSCP", "exp": "Differentiated Services Code Point (DSCP) uses 6 bits in the IP header to specify per-hop traffic prioritization."},
+    {"cat": "11-end", "q": "Which First Hop Redundancy Protocol (FHRP) is an open IETF standard for default gateway redundancy?", "options": ["HSRP", "GLBP", "VRRP", "CARP"], "answer": "VRRP", "exp": "Virtual Router Redundancy Protocol (VRRP) is the open industry standard; HSRP and GLBP are Cisco proprietary."},
+    {"cat": "11-end", "q": "In Software-Defined Networking (SDN), which API type links the central controller to the underlying physical data plane switches?", "options": ["Northbound API", "Southbound API", "Eastbound API", "RESTful Webhook"], "answer": "Southbound API", "exp": "Southbound APIs (e.g., OpenFlow) communicate downward from the controller to control data plane hardware."},
+    {"cat": "11-end", "q": "What switch feature prevents unauthorized DHCP servers by blocking DHCP server offer packets on untrusted ports?", "options": ["DHCP Snooping", "Port Security", "802.1X", "IP Source Guard"], "answer": "DHCP Snooping", "exp": "DHCP Snooping designates switch ports as trusted or untrusted, dropping rogue DHCP server broadcasts."},
+    {"cat": "11-end", "q": "What WAN technology uses short path labels rather than complex routing table lookups to forward Layer 2.5 traffic?", "options": ["MPLS", "Frame Relay", "ATM", "Dial-up"], "answer": "MPLS", "exp": "Multiprotocol Label Switching (MPLS) assigns short labels to packets for fast forwarding across telecom backbones."},
+    {"cat": "11-end", "q": "What formal agreement defines mandatory service uptime percentages, mean-time-to-respond, and penalties from an ISP?", "options": ["AUP", "SLA", "NDA", "MOU"], "answer": "SLA", "exp": "A Service Level Agreement (SLA) is a legally binding contract defining measurable service metrics and remedies."},
+    {"cat": "11-end", "q": "Which security philosophy assumes network breaches are inevitable and mandates continuous verification of all entities?", "options": ["Defense in Depth", "Zero Trust", "Air-gapping", "Least Privilege"], "answer": "Zero Trust", "exp": "Zero Trust enforces 'Never trust, always verify', requiring continuous authentication and microsegmentation."},
+    {"cat": "11-end", "q": "What fire suppression system type utilizes clean chemical gas agents to protect electrical server hardware from water damage?", "options": ["Wet-pipe sprinkler", "Dry-pipe sprinkler", "Clean-Agent Gas (FM-200/Inergen)", "Deluge system"], "answer": "Clean-Agent Gas (FM-200/Inergen)", "exp": "Clean-agent gas systems extinguish electrical fires by heat absorption without leaving conductive water residue."},
+    {"cat": "11-end", "q": "How many total physical cable links are required to build a fully redundant full mesh network with 6 nodes?", "options": ["6", "12", "15", "30"], "answer": "15", "exp": "Full mesh formula: n(n - 1) / 2 -> 6(5) / 2 = 30 / 2 = 15 total links."},
+    {"cat": "11-end", "q": "What port security mode drops violating packets and transitions the switch port into an err-disabled shutdown state?", "options": ["Protect", "Restrict", "Shutdown", "Monitor"], "answer": "Shutdown", "exp": "The 'Shutdown' violation mode disables the interface completely, requiring admin intervention or auto-recovery."},
+    {"cat": "11-end", "q": "Which technology aggregates multiple physical network connections into a single logical channel using the IEEE 802.3ad standard?", "options": ["LACP", "STP", "LLDP", "CDP"], "answer": "LACP", "exp": "Link Aggregation Control Protocol (LACP - 802.3ad) provides combined link bandwidth and automatic link failover."}
 ]
 
 class StudyTab(ttk.Frame):
@@ -449,6 +561,7 @@ class StudyTab(ttk.Frame):
         self.questions = QUIZ_DATA.get(chapter_name, [])
         self.current_q_index = 0
         
+        # Bottom flashcard container
         quiz_frame = ttk.LabelFrame(self, text="Practice Flashcards")
         quiz_frame.pack(side=tk.BOTTOM, fill=tk.X, expand=False, padx=10, pady=(5, 10))
         
@@ -473,6 +586,7 @@ class StudyTab(ttk.Frame):
         self.btn_next = ttk.Button(btn_frame, text="Next Question", command=self.next_question)
         self.btn_next.pack(fill=tk.X, pady=(5, 5))
 
+        # Top summary container
         notes_frame = ttk.LabelFrame(self, text="Chapter Summary")
         notes_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=10, pady=(10, 5))
         
@@ -631,7 +745,7 @@ class PracticeTestTab(ttk.Frame):
         self.current_q_index = 0
         self.score = 0
         self.selected_answer = tk.StringVar()
-        self.exam_mode = tk.IntVar(value=20) 
+        self.exam_mode = tk.StringVar(value="full")
         
         self.header_lbl = tk.Label(self, text="CompTIA Practice Simulator", font=("Helvetica", 14, "bold"))
         self.header_lbl.pack(pady=(15, 2))
@@ -643,14 +757,22 @@ class PracticeTestTab(ttk.Frame):
         self.q_frame.pack(fill=tk.BOTH, expand=True, padx=30)
         
         self.start_frame = ttk.Frame(self.q_frame)
-        self.start_frame.pack(fill=tk.BOTH, expand=True, pady=30)
+        self.start_frame.pack(fill=tk.BOTH, expand=True, pady=20)
         
-        tk.Label(self.start_frame, text="Select Exam Practice Mode:", font=("Helvetica", 12, "bold")).pack(pady=(0, 10))
+        tk.Label(self.start_frame, text="Select Exam Study Domain:", font=("Helvetica", 12, "bold")).pack(pady=(0, 15))
         
-        ttk.Radiobutton(self.start_frame, text="Quick Quiz (20 Random Questions)", variable=self.exam_mode, value=20).pack(pady=5)
-        ttk.Radiobutton(self.start_frame, text=f"Full Practice Exam ({len(PRACTICE_TEST_BANK)} Questions)", variable=self.exam_mode, value=len(PRACTICE_TEST_BANK)).pack(pady=5)
+        # Calculate pool counts
+        cnt_1_6 = len([q for q in PRACTICE_TEST_BANK if q["cat"] == "1-6"])
+        cnt_7_10 = len([q for q in PRACTICE_TEST_BANK if q["cat"] == "7-10"])
+        cnt_11_end = len([q for q in PRACTICE_TEST_BANK if q["cat"] == "11-end"])
+        cnt_full = len(PRACTICE_TEST_BANK)
+
+        ttk.Radiobutton(self.start_frame, text=f"Part 1: Foundations (Ch 1–6) — {cnt_1_6} Questions", variable=self.exam_mode, value="1-6").pack(anchor="w", padx=120, pady=5)
+        ttk.Radiobutton(self.start_frame, text=f"Part 2: Wireless, Cloud & Security (Ch 7–10) — {cnt_7_10} Questions", variable=self.exam_mode, value="7-10").pack(anchor="w", padx=120, pady=5)
+        ttk.Radiobutton(self.start_frame, text=f"Part 3: Routing, Hardening & Arch (Ch 11–14) — {cnt_11_end} Questions", variable=self.exam_mode, value="11-end").pack(anchor="w", padx=120, pady=5)
+        ttk.Radiobutton(self.start_frame, text=f"Full Practice Exam (All Chapters Combined) — {cnt_full} Questions", variable=self.exam_mode, value="full").pack(anchor="w", padx=120, pady=5)
         
-        ttk.Button(self.start_frame, text="Begin Simulator", command=self.start_new_test).pack(pady=25)
+        ttk.Button(self.start_frame, text="Begin Selected Exam", command=self.start_new_test).pack(pady=25)
         
         self.lbl_question = tk.Label(self.q_frame, text="", font=("Helvetica", 11, "bold"), wraplength=600, justify="left")
         self.radio_btns = []
@@ -683,7 +805,7 @@ class PracticeTestTab(ttk.Frame):
             rb.pack_forget()
             
         self.progress_lbl.config(text="")
-        self.start_frame.pack(fill=tk.BOTH, expand=True, pady=30)
+        self.start_frame.pack(fill=tk.BOTH, expand=True, pady=20)
 
     def start_new_test(self):
         self.start_frame.pack_forget()
@@ -697,8 +819,13 @@ class PracticeTestTab(ttk.Frame):
         self.btn_submit.pack(side=tk.LEFT, padx=(0, 10))
         self.btn_next.pack(side=tk.LEFT)
 
-        test_size = self.exam_mode.get()
-        self.current_test = random.sample(PRACTICE_TEST_BANK, min(test_size, len(PRACTICE_TEST_BANK)))
+        mode = self.exam_mode.get()
+        if mode == "full":
+            pool = PRACTICE_TEST_BANK
+        else:
+            pool = [q for q in PRACTICE_TEST_BANK if q["cat"] == mode]
+
+        self.current_test = random.sample(pool, len(pool))
         self.current_q_index = 0
         self.score = 0
         
@@ -790,13 +917,13 @@ class NetworkStudyApp:
     def __init__(self, root):
         self.root = root
         self.root.title(f"Network+ Comprehensive Study System - Build {APP_VERSION}")
-        self.root.geometry("900x820")
+        self.root.geometry("920x840")
         
         self.is_dark_mode = False
         self.style = ttk.Style()
         self.style.theme_use('clam')
         
-        # 1. Header (Packed First)
+        # 1. Header
         self.header_frame = tk.Frame(root, pady=12)
         self.header_frame.pack(fill=tk.X, side=tk.TOP)
         
@@ -806,7 +933,7 @@ class NetworkStudyApp:
         self.btn_theme = ttk.Button(self.header_frame, text="🌙 Dark Mode", command=self.toggle_theme)
         self.btn_theme.pack(side=tk.RIGHT, padx=20)
         
-        # 2. Footer (Packed Second, locked to bottom)
+        # 2. Footer
         self.footer_frame = tk.Frame(root, pady=5)
         self.footer_frame.pack(fill=tk.X, side=tk.BOTTOM)
         
@@ -814,7 +941,7 @@ class NetworkStudyApp:
         self.footer_label = tk.Label(self.footer_frame, text=footer_text, font=("Helvetica", 8, "bold"))
         self.footer_label.pack()
 
-        # 3. Notebook Tabs (Packed Third, fills middle)
+        # 3. Notebook Tabs
         self.notebook = ttk.Notebook(root)
         self.notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
         
@@ -868,7 +995,7 @@ class NetworkStudyApp:
         self.style.configure('TLabel', background=bg_main, foreground=fg_main)
         self.style.configure('TButton', background=bg_alt, foreground=fg_main)
         self.style.configure('TNotebook', background=bg_main)
-        self.style.configure('TNotebook.Tab', background=bg_alt, foreground=fg_main, padding=[10, 2])
+        self.style.configure('TNotebook.Tab', background=bg_alt, foreground=fg_main, padding=[6, 2])
         self.style.map('TNotebook.Tab', background=[('selected', bg_main)])
         
         for tab in self.chapter_tabs:
