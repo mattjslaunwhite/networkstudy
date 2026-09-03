@@ -2,7 +2,7 @@
 """
 IT Professional Program: Introduction to Network Administration
 Day 14 - Chapter 17: Data Center and Cloud Concepts
-Study, Testing, Interactive Labs, and Hyper-V Management Hooks
+Study, Testing, Interactive Labs, and Live Hyper-V Guest Automation Engine
 """
 
 import sys
@@ -18,7 +18,7 @@ from tkinter import ttk, messagebox
 
 # --- METADATA ---
 COURSE_NAME = "Day 14: Data Center & Cloud Concepts"
-BUILD_VERSION = "Build 1.2.0 (Admin Elevation & Theme Edition)"
+BUILD_VERSION = "Build 1.4.0 (Robust Hyper-V Automation & Theme Edition)"
 
 # --- PRIVILEGE ELEVATION UTILITIES ---
 def is_admin():
@@ -26,11 +26,10 @@ def is_admin():
     try:
         return ctypes.windll.shell32.IsUserAnAdmin() != 0
     except AttributeError:
-        # Non-Windows systems check uid 0
         return os.getuid() == 0 if hasattr(os, "getuid") else False
 
 def run_as_admin():
-    """Relaunch the current python script with elevated administrator privileges via UAC."""
+    """Relaunch the current script with elevated administrator privileges via UAC."""
     if platform.system() != "Windows":
         messagebox.showinfo("Elevation", "Elevation prompt is only applicable on Windows hosts.")
         return
@@ -405,7 +404,7 @@ class TestingModule(ttk.Frame):
         self.lbl_explanation.config(bg=theme["frame_bg"], fg=theme["muted"])
 
 # =====================================================================
-# SECTION 3: LABS, GAMES & HYPER-V INTEGRATION HOOKS
+# SECTION 3: LABS, GAMES & HYPER-V GUEST AUTOMATION HOOKS
 # =====================================================================
 class LabSection(ttk.Frame):
     def __init__(self, parent):
@@ -424,7 +423,7 @@ class LabSection(ttk.Frame):
         self.lab_notebook.add(self.tab_pizza, text="🍕 Lab 3: Pizza-as-a-Service Cloud Matcher")
 
         self.tab_hyperv = HyperVHookTab(self.lab_notebook)
-        self.lab_notebook.add(self.tab_hyperv, text="🎛️ Hyper-V Integration")
+        self.lab_notebook.add(self.tab_hyperv, text="🎛️ Hyper-V Live Guest Automation")
 
     def apply_theme(self, theme):
         self.tab_iscsi.apply_theme(theme)
@@ -703,11 +702,12 @@ class PizzaGameTab(ttk.Frame):
         self.lbl_desc.config(bg=theme["frame_bg"], fg=theme["muted"])
         self.lbl_game_stats.config(bg=theme["bg"], fg=theme["muted"])
 
-# --- LAB 4: HYPER-V HOOK & LIVE DISCOVERY ---
+# --- LAB 4: LIVE HYPER-V GUEST AUTOMATION ENGINE ---
 class HyperVHookTab(ttk.Frame):
     """
     Direct PowerShell & Hyper-V Management hooks for SERVER1 and SERVER2
-    with an elevation hook to request UAC Administrator access.
+    with an elevation hook to request UAC Administrator access and
+    PowerShell Direct automation to execute tasks inside the virtual machines.
     """
     def __init__(self, parent):
         super().__init__(parent)
@@ -715,7 +715,7 @@ class HyperVHookTab(ttk.Frame):
         self.admin_status = is_admin()
         
         top_box = ttk.LabelFrame(self, text="Hyper-V Host Connection & Administrator Controls")
-        top_box.pack(fill=tk.X, padx=15, pady=10)
+        top_box.pack(fill=tk.X, padx=15, pady=(10, 5))
         
         status_frame = ttk.Frame(top_box)
         status_frame.pack(fill=tk.X, padx=10, pady=(6, 2))
@@ -736,7 +736,7 @@ class HyperVHookTab(ttk.Frame):
         else:
             self.lbl_perm = tk.Label(
                 status_frame, 
-                text="⚠️ Standard User (Read/Write to Hyper-V may be restricted)", 
+                text="⚠️ Standard User (Elevation Recommended for Hyper-V)", 
                 fg="#e67e22", 
                 font=("Helvetica", 9, "bold")
             )
@@ -752,27 +752,63 @@ class HyperVHookTab(ttk.Frame):
 
         ttk.Label(
             top_box,
-            text="Control and query virtual machine states (SERVER1, SERVER2) directly from this workbench.\n"
-                 "Interacts with Hyper-V module cmdlets: Get-VM, Start-VM, Stop-VM, and vmconnect.exe.",
+            text="Control VM states and execute live guest configurations via PowerShell Direct (VMBus).\n"
+                 "Commands run inside SERVER1/SERVER2 regardless of network/firewall configurations.",
             font=("Helvetica", 10)
-        ).pack(anchor="w", padx=10, pady=6)
+        ).pack(anchor="w", padx=10, pady=(4, 6))
         
         btn_bar = ttk.Frame(top_box)
-        btn_bar.pack(fill=tk.X, padx=10, pady=6)
+        btn_bar.pack(fill=tk.X, padx=10, pady=(0, 8))
         
-        ttk.Button(btn_bar, text="🔄 Query Local Hyper-V VMs", command=self.refresh_vms).pack(side=tk.LEFT, padx=3)
-        ttk.Button(btn_bar, text="▶️ Start Selected VM", command=self.start_vm).pack(side=tk.LEFT, padx=3)
-        ttk.Button(btn_bar, text="⏹️ Stop Selected VM", command=self.stop_vm).pack(side=tk.LEFT, padx=3)
-        ttk.Button(btn_bar, text="🖥️ Launch Virtual Console (vmconnect)", command=self.launch_vmconnect).pack(side=tk.LEFT, padx=3)
+        ttk.Button(btn_bar, text="🔄 Query VMs", command=self.refresh_vms).pack(side=tk.LEFT, padx=3)
+        ttk.Button(btn_bar, text="▶️ Start VM", command=self.start_vm).pack(side=tk.LEFT, padx=3)
+        ttk.Button(btn_bar, text="⏹️ Stop VM", command=self.stop_vm).pack(side=tk.LEFT, padx=3)
+        ttk.Button(btn_bar, text="🖥️ Launch Console", command=self.launch_vmconnect).pack(side=tk.LEFT, padx=3)
+
+        # Guest Automation Workbench
+        auto_box = ttk.LabelFrame(self, text="⚡ Live Lab Implementer (PowerShell Direct -> Guest VMs)")
+        auto_box.pack(fill=tk.X, padx=15, pady=5)
+        
+        cred_row = ttk.Frame(auto_box)
+        cred_row.pack(fill=tk.X, padx=10, pady=5)
+        
+        ttk.Label(cred_row, text="Target VM (Storage):", font=("Helvetica", 9, "bold")).pack(side=tk.LEFT, padx=(0, 2))
+        self.ent_target_vm = ttk.Entry(cred_row, width=12)
+        self.ent_target_vm.insert(0, "SERVER1")
+        self.ent_target_vm.pack(side=tk.LEFT, padx=(0, 10))
+
+        ttk.Label(cred_row, text="Initiator VM (Client):", font=("Helvetica", 9, "bold")).pack(side=tk.LEFT, padx=(0, 2))
+        self.ent_init_vm = ttk.Entry(cred_row, width=12)
+        self.ent_init_vm.insert(0, "SERVER2")
+        self.ent_init_vm.pack(side=tk.LEFT, padx=(0, 10))
+
+        ttk.Label(cred_row, text="Guest Admin User:").pack(side=tk.LEFT, padx=(0, 2))
+        self.ent_user = ttk.Entry(cred_row, width=14)
+        self.ent_user.insert(0, "Administrator")
+        self.ent_user.pack(side=tk.LEFT, padx=(0, 10))
+
+        ttk.Label(cred_row, text="Password:").pack(side=tk.LEFT, padx=(0, 2))
+        self.ent_pass = ttk.Entry(cred_row, width=14, show="•")
+        self.ent_pass.insert(0, "Akira11371$")
+        self.ent_pass.pack(side=tk.LEFT, padx=(0, 5))
+
+        auto_btns = ttk.Frame(auto_box)
+        auto_btns.pack(fill=tk.X, padx=10, pady=(4, 8))
+        
+        ttk.Button(auto_btns, text="📦 1. Provision iSCSI Target on SERVER1", command=self.deploy_target_role).pack(side=tk.LEFT, padx=3)
+        ttk.Button(auto_btns, text="🔗 2. Connect & Mount LUN on SERVER2", command=self.deploy_initiator_connection).pack(side=tk.LEFT, padx=3)
+        ttk.Button(auto_btns, text="🤝 3. Configure NIC Teaming on SERVER1", command=self.deploy_nic_team).pack(side=tk.LEFT, padx=3)
+        ttk.Button(auto_btns, text="🚀 Execute Full End-to-End Lab", command=self.deploy_full_lab).pack(side=tk.RIGHT, padx=3)
         
         paned = ttk.PanedWindow(self, orient=tk.VERTICAL)
-        paned.pack(fill=tk.BOTH, expand=True, padx=15, pady=5)
+        paned.pack(fill=tk.BOTH, expand=True, padx=15, pady=(5, 10))
         
+        # VM Table
         tree_frame = ttk.Frame(paned)
         paned.add(tree_frame, weight=1)
         
         columns = ("Name", "State", "CPUUsage", "MemoryAssigned", "Uptime")
-        self.vm_tree = ttk.Treeview(tree_frame, columns=columns, show="headings", height=6)
+        self.vm_tree = ttk.Treeview(tree_frame, columns=columns, show="headings", height=5)
         self.vm_tree.heading("Name", text="VM Name")
         self.vm_tree.heading("State", text="State")
         self.vm_tree.heading("CPUUsage", text="CPU (%)")
@@ -790,8 +826,9 @@ class HyperVHookTab(ttk.Frame):
         self.vm_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scroll.pack(side=tk.RIGHT, fill=tk.Y)
         
-        log_frame = ttk.LabelFrame(paned, text="Hyper-V Diagnostic Terminal")
-        paned.add(log_frame, weight=1)
+        # Live Automation Output Terminal
+        log_frame = ttk.LabelFrame(paned, text="Hyper-V Diagnostic & Execution Terminal")
+        paned.add(log_frame, weight=2)
         
         self.txt_log = tk.Text(log_frame, font=("Monospace", 9), relief=tk.FLAT, padx=10, pady=10)
         self.txt_log.pack(fill=tk.BOTH, expand=True)
@@ -801,7 +838,7 @@ class HyperVHookTab(ttk.Frame):
             self.log("Warning: Without elevated rights, Get-VM or Start-VM commands may return Access Denied errors.")
             
         if platform.system() != "Windows":
-            self.log("Notice: Operating system is not Windows. Hyper-V cmdlets will simulate mock targets (SERVER1, SERVER2).")
+            self.log("Notice: Host is not Windows. Operating in simulation mode for SERVER1 and SERVER2.")
             self.load_mock_vms()
         else:
             self.refresh_vms()
@@ -814,17 +851,37 @@ class HyperVHookTab(ttk.Frame):
         self.txt_log.insert(tk.END, f">> {msg}\n")
         self.txt_log.see(tk.END)
 
-    def run_powershell(self, command):
+    def run_powershell(self, command, timeout=300):
+        """Execute a PowerShell command with a generous timeout for role installations."""
         if platform.system() != "Windows":
             raise EnvironmentError("PowerShell Hyper-V module requires Windows Host.")
         cmd = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", command]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=12)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         if result.returncode != 0:
             err = result.stderr.strip()
             if "permission" in err.lower() or "access is denied" in err.lower():
                 raise PermissionError("Access is denied. Administrator privileges are required to manage Hyper-V.")
             raise RuntimeError(err)
         return result.stdout.strip()
+
+    def run_powershell_direct(self, vm_name, script_block, timeout=300):
+        """Execute a script inside the guest VM using PowerShell Direct and properly escaped credentials."""
+        user = self.ent_user.get().strip()
+        pwd = self.ent_pass.get().strip()
+        
+        if platform.system() != "Windows":
+            self.log(f"[SIMULATED PowerShell Direct -> {vm_name}]: {script_block}")
+            return "Simulated Success"
+            
+        escaped_user = user.replace("'", "''")
+        escaped_pwd = pwd.replace("'", "''")
+        
+        ps_wrapper = f"""
+        $sec = ConvertTo-SecureString -String '{escaped_pwd}' -AsPlainText -Force
+        $cred = New-Object System.Management.Automation.PSCredential ('{escaped_user}', $sec)
+        Invoke-Command -VMName '{vm_name}' -Credential $cred -ScriptBlock {{ {script_block} }}
+        """
+        return self.run_powershell(ps_wrapper, timeout=timeout)
 
     def refresh_vms(self):
         for item in self.vm_tree.get_children():
@@ -858,7 +915,7 @@ class HyperVHookTab(ttk.Frame):
                 self.load_mock_vms()
         except PermissionError as p_err:
             self.log(f"PERMISSION ERROR: {p_err}")
-            self.log("Click '🛡️ Elevate to Admin' above to grant the required UAC rights.")
+            self.log("Click '🛡️ Elevate to Admin' above to grant required UAC rights.")
             self.load_mock_vms()
         except Exception as ex:
             self.log(f"Hyper-V query error: {ex}")
@@ -938,6 +995,117 @@ class HyperVHookTab(ttk.Frame):
             self.log(f"Remote console for '{vm}' opened.")
         except Exception as ex:
             self.log(f"Could not open vmconnect: {ex}. Ensure Hyper-V GUI management tools are installed.")
+
+    # --- LIVE GUEST DEPLOYMENT SCRIPTS ---
+    def deploy_target_role(self):
+        vm = self.ent_target_vm.get().strip()
+        self.log(f"Deploying iSCSI Target Server on '{vm}' (this may take up to 2-3 minutes)...")
+        
+        script = """
+        $feat = Get-WindowsFeature -Name FS-iSCSITarget-Server
+        if (-not $feat.Installed) {
+            Write-Output "Installing FS-iSCSITarget-Server..."
+            Install-WindowsFeature -Name FS-iSCSITarget-Server -IncludeManagementTools | Out-Null
+        } else {
+            Write-Output "FS-iSCSITarget-Server already installed."
+        }
+
+        if (-not (Test-Path 'C:\\iSCSIVirtualDisks')) {
+            New-Item -ItemType Directory -Path 'C:\\iSCSIVirtualDisks' -Force | Out-Null
+        }
+
+        if (-not (Test-Path 'C:\\iSCSIVirtualDisks\\DataLUN_01.vhdx')) {
+            New-IscsiVirtualDisk -Path 'C:\\iSCSIVirtualDisks\\DataLUN_01.vhdx' -SizeBytes 10GB | Out-Null
+            Write-Output "Created 10GB LUN: DataLUN_01.vhdx"
+        }
+
+        if (-not (Get-IscsiServerTarget -TargetName 'Target-Server1' -ErrorAction SilentlyContinue)) {
+            New-IscsiServerTarget -TargetName 'Target-Server1' -InitiatorId 'IQN:*' | Out-Null
+            Add-IscsiVirtualDiskTargetMapping -TargetName 'Target-Server1' -Path 'C:\\iSCSIVirtualDisks\\DataLUN_01.vhdx' | Out-Null
+            Write-Output "Created Target: Target-Server1 with wildcard IQN mapping."
+        }
+
+        Get-IscsiServerTarget | Select-Object TargetName, State
+        """
+        try:
+            out = self.run_powershell_direct(vm, script, timeout=300)
+            self.log(f"SUCCESS on {vm}:\n{out}")
+            messagebox.showinfo("Deployment Complete", f"iSCSI Target configured and ready on {vm}[cite: 1]!")
+        except Exception as ex:
+            self.log(f"ERROR configuring {vm}: {ex}")
+            messagebox.showerror("Deployment Error", f"Failed on {vm}:\n{ex}")
+
+    def deploy_initiator_connection(self):
+        init_vm = self.ent_init_vm.get().strip()
+        target_vm = self.ent_target_vm.get().strip()
+        self.log(f"Configuring iSCSI Initiator on '{init_vm}' -> Target '{target_vm}'...")
+
+        script = f"""
+        Start-Service -Name MSiSCSI -ErrorAction SilentlyContinue
+        Set-Service -Name MSiSCSI -StartupType Automatic
+
+        $targetHost = '{target_vm}'
+        
+        New-IscsiTargetPortal -TargetPortalAddress $targetHost -ErrorAction SilentlyContinue | Out-Null
+
+        $targets = Get-IscsiTarget
+        if ($targets) {{
+            foreach ($t in $targets) {{
+                if (-not $t.IsConnected) {{
+                    Connect-IscsiTarget -NodeAddress $t.NodeAddress -IsPersistent $True | Out-Null
+                    Write-Output "Connected to $($t.NodeAddress)"
+                }}
+            }}
+        }} else {{
+            throw "No iSCSI Targets discovered from $targetHost. Verify Target role on $targetHost."
+        }}
+
+        Start-Sleep -Seconds 4
+        Update-HostStorageCache
+
+        $rawDisks = Get-Disk | Where-Object {{ $_.BusType -eq 'iSCSI' -and ($_.PartitionStyle -eq 'RAW' -or $_.OperationalStatus -eq 'Offline') }}
+        foreach ($d in $rawDisks) {{
+            Set-Disk -Number $d.Number -IsOffline $False
+            Initialize-Disk -Number $d.Number -PartitionStyle MBR -PassThru |
+            New-Partition -DriveLetter 'X' -UseMaximumSize |
+            Format-Volume -FileSystem NTFS -NewFileSystemLabel 'SAN_Storage' -Confirm:$false | Out-Null
+            Write-Output "Initialized and formatted Disk $($d.Number) as Drive X:"
+        }}
+
+        Get-Volume | Where-Object {{ $_.DriveLetter -eq 'X' }} | Select-Object DriveLetter, FileSystemLabel, SizeRemaining
+        """
+        try:
+            out = self.run_powershell_direct(init_vm, script, timeout=180)
+            self.log(f"SUCCESS on {init_vm}:\n{out}")
+            messagebox.showinfo("Deployment Complete", f"iSCSI Initiator connected and Drive X: mounted on {init_vm}[cite: 1]!")
+        except Exception as ex:
+            self.log(f"ERROR configuring {init_vm}: {ex}")
+            messagebox.showerror("Deployment Error", f"Failed on {init_vm}:\n{ex}")
+
+    def deploy_nic_team(self):
+        vm = self.ent_target_vm.get().strip()
+        self.log(f"Configuring NIC Teaming on '{vm}'...")
+        script = """
+        $nics = (Get-NetAdapter).Name
+        if ($nics.Count -ge 2) {
+            New-NetLbfoTeam -Name 'Team01' -TeamMembers $nics[0],$nics[1] -TeamingMode SwitchIndependent -LoadBalancingAlgorithm Dynamic -Confirm:$false
+            Get-NetLbfoTeam
+        } else {
+            Write-Output "At least 2 network adapters required to form a team. Current count: $($nics.Count)"
+        }
+        """
+        try:
+            out = self.run_powershell_direct(vm, script, timeout=120)
+            self.log(f"NIC Teaming configuration output on {vm}:\n{out}")
+            messagebox.showinfo("NIC Teaming", f"NIC Teaming routine executed on {vm}[cite: 1].")
+        except Exception as ex:
+            self.log(f"ERROR configuring NIC Team on {vm}: {ex}")
+
+    def deploy_full_lab(self):
+        if messagebox.askyesno("Full Automation", "Execute end-to-end Day 14 lab?\n1. Provision iSCSI target on SERVER1\n2. Attach and mount LUN on SERVER2\n3. Configure NIC team[cite: 1]"):
+            self.deploy_target_role()
+            self.deploy_initiator_connection()
+            self.deploy_nic_team()
 
     def apply_theme(self, theme):
         self.txt_log.config(bg=theme["text_bg"], fg=theme["fg"], insertbackground=theme["fg"])
